@@ -1,0 +1,2 @@
+Network Name,MAC,IP,Status,Export to IP-MAC Binding,Description
+LAN,AA-AA-AA-AA-AA-AA,192.168.0.2,TRUE,TRUE,DHCP Reservation import example

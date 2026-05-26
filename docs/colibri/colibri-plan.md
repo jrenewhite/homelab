@@ -63,8 +63,8 @@ Casa 1 sera la base del homelab. La prioridad recomendada es:
 - `nas`: `192.168.0.136`
 - `orangepi5-ultra`: `192.168.0.151`
 - `orangepi5-max`: `192.168.0.152`
-- `orangepi5-a`: `192.168.0.153`
-- `orangepi5-b`: `192.168.0.154`
+- `orangepi5-a`: `192.168.0.153` pre-reservas; objetivo final `192.168.0.53`
+- `orangepi5-b`: `192.168.0.154` pre-reservas; objetivo final `192.168.0.54`
 - `services`: `192.168.0.155`
 - `management`: `192.168.0.161`
 
@@ -142,7 +142,7 @@ Razonamiento:
 
 ### Nodo 3: Orange Pi
 
-- `Pi-hole` secundario o DNS secundario
+- `Pi-hole` secundario en `ultra`; `max` como terciario opcional
 - `Home Assistant`, si usas dongles o integraciones que prefieras aislar
 - agentes de monitoreo
 - tareas ligeras y servicios auxiliares
@@ -236,10 +236,11 @@ Propuesta final dentro de `192.168.0.0/24`:
 ## Orden de implementacion recomendado
 
 1. Aplicar reservas DHCP del router
-2. Estandarizar `SSH key` y hostnames finales despues de las nuevas IPs
-3. Desplegar `Pi-hole`, `Vaultwarden`, `Paperless` y `Portainer`
-4. Integrar `Home Assistant` en `Orange Pi` si conviene por perifericos o aislamiento
-5. Activar `ai-gpu` solo bajo demanda para GPU dedicada
+2. Mantener DHCP en el router y usar `Pi-hole` solo como DNS
+3. Estandarizar `SSH key` y hostnames finales despues de las nuevas IPs
+4. Desplegar `Pi-hole`, `Vaultwarden`, `Paperless` y `Portainer`
+5. Integrar `Home Assistant` en `Orange Pi` si conviene por perifericos o aislamiento
+6. Activar `ai-gpu` solo bajo demanda para GPU dedicada
 6. Documentar credenciales, DNS, dominios, shares y restauracion
 
 ## Riesgos y decisiones pendientes

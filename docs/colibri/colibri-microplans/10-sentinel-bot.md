@@ -103,6 +103,19 @@ Definir el contrato completo del bot de resiliencia antes de implementarlo.
 - no hay ambigüedad sobre eventos, acciones ni fallback.
 - existe un camino de activación gradual de observación a acción
 
+## Prechecks mínimos
+
+- endpoints de salud definidos
+- canal alterno de alertas disponible
+- reglas de autoridad por nodo aprobadas
+- despliegue inicial en modo observación
+
+## Rollback
+
+- volver el bot a modo observación
+- desactivar acciones automáticas
+- si un automatismo hace algo inesperado, retirar permisos de acción antes de tocar lógica
+
 ## Dependencias previas
 
 - blackout

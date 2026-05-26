@@ -7,6 +7,7 @@ Este documento es la fuente de verdad principal para diseño y decisiones del si
 - [white-enciso-multisite.md](/home/jrenewhite/Projects/homelab/docs/white-enciso-multisite.md): marco compartido multi-site
 - [colibri-inventory.md](./colibri-inventory.md): estado factual observado
 - [colibri-router-baseline.md](./colibri-router-baseline.md): baseline del router
+- [colibri-risk-matrix.md](./colibri-risk-matrix.md): riesgo, prechecks y rollback por microplan
 - `colibri-microplans/`: anexos `decision complete` por subsistema
 
 ## 1. Objetivo
@@ -24,6 +25,7 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 - `management` es el nodo de control 24/7.
 - `nas` es una restricción arquitectónica despertable, no una conveniencia.
 - Ninguna app crítica puede depender runtime de `nas`.
+- el `ER707-M2` conserva DHCP como autoridad única de la LAN; `Pi-hole` solo participa como resolvedor DNS
 - `root_squash` se mantiene en `NFS`.
 - Permisos y acceso se resuelven con `UID/GID` fijos, grupos compartidos, `setgid` y `ACLs`.
 - `SSO` es requisito arquitectónico para servicios de usuario y administración compatibles.
@@ -33,6 +35,8 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 - `WireGuard` será el backbone privado entre sedes; `Tailscale` conserva el rol de acceso administrativo
 - La energía manda la degradación: blackout y UPS tienen prioridad sobre conveniencia de apps.
 - Todo cambio operativo debe privilegiar continuidad de servicio, validación previa y rollback simple.
+- toda etapa de DNS doméstico debe conservar un fallback público de emergencia en el router hasta que la resiliencia local esté realmente probada
+- ningún microplan pasa a ejecución real si no tiene prechecks, criterio de abortar y rollback proporcional a su clase de riesgo
 - Nunca se cambia al mismo tiempo más de una capa crítica entre:
   - direccionamiento/IPs
   - DNS del router

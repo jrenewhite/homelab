@@ -1,0 +1,57 @@
+Network Name,MAC,IP,Status,Export to IP-MAC Binding,Description
+LAN,C4-65-16-AC-AB-37,192.168.0.10,TRUE,TRUE,management / HP EliteDesk 800 G4
+LAN,C8-FF-BF-05-F4-46,192.168.0.11,TRUE,TRUE,nas / AOOSTAR WTR PRO
+LAN,58-47-CA-79-08-69,192.168.0.12,TRUE,TRUE,services / Minisforum UM890
+LAN,58-47-CA-7F-84-B5,192.168.0.13,TRUE,TRUE,ai-gpu / Minisforum 790S7
+LAN,C0-74-2B-FC-59-86,192.168.0.14,TRUE,TRUE,orangepi5-ultra
+LAN,C0-74-2B-FD-71-43,192.168.0.15,TRUE,TRUE,orangepi5-max
+LAN,C6-CC-84-3D-E2-67,192.168.0.16,TRUE,TRUE,orangepi5-a
+LAN,C6-87-B3-C0-55-95,192.168.0.17,TRUE,TRUE,orangepi5-b
+LAN,58-47-CA-7F-7A-72,192.168.0.18,TRUE,TRUE,bd795m / CachyOS workstation
+LAN,92-17-9B-43-95-9A,192.168.0.19,TRUE,TRUE,moto-one / octoprint helper
+LAN,08-ED-ED-04-D9-DD,192.168.0.30,TRUE,TRUE,xvr-dahua
+LAN,80-97-1B-02-2B-FF,192.168.0.31,TRUE,TRUE,altenergy-ecu
+LAN,8C-90-2D-D1-2C-78,192.168.0.32,TRUE,TRUE,deco-X50-site
+LAN,8C-90-2D-D1-2C-4C,192.168.0.33,TRUE,TRUE,deco-X50-estudio
+LAN,8C-90-2D-D0-FB-D8,192.168.0.34,TRUE,TRUE,deco-X50-sala-video
+LAN,98-BA-5F-E6-DB-F4,192.168.0.35,TRUE,TRUE,deco-X50-Outdoor
+LAN,98-25-4A-4F-2B-1C,192.168.0.36,TRUE,TRUE,deco-S7-asador
+LAN,98-25-4A-4F-2B-F0,192.168.0.37,TRUE,TRUE,deco-S7-garage
+LAN,98-25-4A-4E-EE-50,192.168.0.38,TRUE,TRUE,deco-S7-cocina
+LAN,78-8C-B5-52-29-58,192.168.0.39,TRUE,TRUE,deco-M5-recamara-principal
+LAN,C0-06-C3-2A-6C-64,192.168.0.40,TRUE,TRUE,deco-M4R-recamara-posterior
+LAN,EC-75-0C-D9-50-A4,192.168.0.41,TRUE,TRUE,deco-X15-salon-green
+LAN,E0-73-E7-F5-C4-0F,192.168.0.42,TRUE,TRUE,hp-officejet-pro-9020
+LAN,AC-67-84-86-89-4B,192.168.0.50,TRUE,TRUE,google-home-hub-salon-green-bar
+LAN,AC-67-84-8F-18-DA,192.168.0.51,TRUE,TRUE,google-home-hub-sala-video
+LAN,AC-67-84-85-CB-BF,192.168.0.52,TRUE,TRUE,google-home-hub-recamara-frontal
+LAN,44-07-0B-D9-DA-90,192.168.0.53,TRUE,TRUE,google-home-hub-cocina
+LAN,00-F6-20-58-C9-AB,192.168.0.54,TRUE,TRUE,google-home-mini-salon-green-par-derecha
+LAN,20-DF-B9-4D-CD-94,192.168.0.55,TRUE,TRUE,google-home-mini-salon-green-par-izquierda
+LAN,48-D6-D5-5B-17-25,192.168.0.56,TRUE,TRUE,google-home-mini-salon-green-salita
+LAN,CC-F4-11-C2-49-4F,192.168.0.57,TRUE,TRUE,google-nest-mini-sala
+LAN,48-D6-D5-F1-54-B3,192.168.0.58,TRUE,TRUE,google-home-mini-taller
+LAN,80-48-2C-32-2C-2F,192.168.0.60,TRUE,TRUE,wyze-doorbell-v2
+LAN,D0-3F-27-DA-C8-3E,192.168.0.61,TRUE,TRUE,wyze-cam-v3-garage
+LAN,D0-3F-27-D9-57-D6,192.168.0.62,TRUE,TRUE,wyze-cam-pan-v3-comedor
+LAN,D0-3F-27-FE-9F-99,192.168.0.63,TRUE,TRUE,wyze-cam-og-sala
+LAN,D0-3F-27-FE-96-C9,192.168.0.64,TRUE,TRUE,wyze-cam-og-pasillo-planta-alta
+LAN,D0-3F-27-1D-2B-B1,192.168.0.65,TRUE,TRUE,wyze-bulb-v2-recamara-frontal
+LAN,80-48-2C-93-43-2F,192.168.0.66,TRUE,TRUE,wyze-palm-lock-cocina
+LAN,80-48-2C-93-43-3E,192.168.0.67,TRUE,TRUE,wyze-palm-lock-frente
+LAN,80-48-2C-67-08-23,192.168.0.70,TRUE,TRUE,wyze-wifi-chime
+LAN,D0-3F-27-0C-6B-3B,192.168.0.71,TRUE,TRUE,wyze-plug-ventilador-asador
+LAN,D0-3F-27-06-7C-D1,192.168.0.72,TRUE,TRUE,wyze-plug-ventilador-garage
+LAN,D0-3F-27-0C-5F-12,192.168.0.73,TRUE,TRUE,wyze-plug-ventilador-cuarto-lavado
+LAN,80-48-2C-5A-CB-20,192.168.0.74,TRUE,TRUE,wyze-outdoor-plug-jardin-trasero
+LAN,7C-78-B2-64-6F-FF,192.168.0.75,TRUE,TRUE,wyze-outdoor-plug-jardin-cocina
+LAN,7C-78-B2-64-76-FB,192.168.0.76,TRUE,TRUE,wyze-outdoor-plug-jardin-frente
+LAN,7C-78-B2-98-6C-06,192.168.0.77,TRUE,TRUE,wyze-outdoor-plug-puerta
+LAN,BC-07-1D-74-2C-59,192.168.0.80,TRUE,TRUE,tp-link-kp303-sala-lampara
+LAN,BC-07-1D-74-21-55,192.168.0.81,TRUE,TRUE,tp-link-kp303-sala-sofa
+LAN,BC-07-1D-74-37-6D,192.168.0.82,TRUE,TRUE,tp-link-kp303-salon-green
+LAN,BC-07-1D-74-36-54,192.168.0.83,TRUE,TRUE,tp-link-kp303-impresora-3d
+LAN,D4-AD-FC-E9-68-38,192.168.0.84,TRUE,TRUE,govee-outdoor-lights-derecho
+LAN,D4-AD-FC-E7-FA-4A,192.168.0.85,TRUE,TRUE,govee-outdoor-lights-izquierdo
+LAN,D0-C9-07-63-AB-58,192.168.0.86,TRUE,TRUE,govee-smart-lamp-recamara-frontal-escritorio
+LAN,D0-C9-07-63-3D-B4,192.168.0.87,TRUE,TRUE,govee-smart-lamp-recamara-frontal-tv

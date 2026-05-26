@@ -66,6 +66,19 @@ Servicios core por prioridad:
 - ningún servicio core depende de `nas`.
 - existe orden de despliegue seguro y validación privada antes de hacerlo visible a clientes o Internet
 
+## Prechecks mínimos
+
+- servicio accesible por IP privada o puerto staged
+- storage local validado
+- dependencia de DNS o proxy claramente identificada
+- no mezclar con cambios de IP, DNS del router o blackout
+
+## Rollback
+
+- detener o retirar el contenedor nuevo
+- volver el acceso a privado o staged
+- si un servicio core falla en validación, no se promueve el siguiente en la misma ventana
+
 ## Dependencias previas
 
 - red

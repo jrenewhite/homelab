@@ -19,7 +19,7 @@ services   = vida digital principal, Matrix, Hermes, LLM liviana, apps y Arr sta
 ai-gpu     = músculo pesado: LLM grande, Jellyfin GPU, Immich ML, OCR, batch
 opi-ultra  = supervivencia/domótica: Home Assistant, DNS secundario, sentinel
 opi-max    = sentinela secundaria y worker ARM
-opi-a/b    = watchdogs, DNS extra opcional y workers stateless
+opi-a/b    = watchdogs y workers stateless
 nas        = bóveda fría despertable, backups y archivo final
 ```
 
@@ -36,8 +36,8 @@ La meta es que el sistema sea útil y resiliente sin depender de que todos los n
 | `ai-gpu` / 790S7 | GPU pesada, LLM grande, Jellyfin con GPU, Immich ML, Whisper/OCR/batch | Bajo demanda |
 | `nas` / WTR Pro | NFS, backups, archivo frío, snapshots, almacenamiento maestro | Despertable |
 | `orangepi5-ultra` | Home Assistant, MQTT, Pi-hole secundario, Caddy/cloudflared backup, sentinel | 24/7 |
-| `orangepi5-max` | Sentinel secundario, worker ARM, backup ligero | 24/7 |
-| `orangepi5-a` | DNS terciario opcional, watchdog, worker stateless | 24/7 |
+| `orangepi5-max` | Sentinel secundario, worker ARM, Pi-hole terciario opcional, backup ligero | 24/7 |
+| `orangepi5-a` | Watchdog, worker stateless | 24/7 |
 | `orangepi5-b` | Healthcheck, watchdog, worker stateless | 24/7 |
 
 ---
@@ -58,7 +58,7 @@ Según baseline del router:
 | `orangepi5-a` | `192.168.0.53` |
 | `orangepi5-b` | `192.168.0.54` |
 
-Reservas DHCP pendientes de aplicar en el `TP-Link ER707-M2`.
+Las IPs finales deben venir de reservas DHCP en el `TP-Link ER707-M2`; no de IPs estáticas repartidas por host.
 
 ---
 
@@ -206,17 +206,18 @@ Pi-hole secundario:
   orangepi5-ultra / 192.168.0.51
 
 Pi-hole terciario opcional:
-  orangepi5-a / 192.168.0.53
+  orangepi5-max / 192.168.0.52
 ```
 
 ### DHCP del router
 
 ```text
+DHCP = siempre en el ER707-M2
 DNS 1 = 192.168.0.10
-DNS 2 = 192.168.0.51
+DNS 2 = 1.1.1.1
 ```
 
-Esto no es un failover perfecto porque muchos clientes no tratan el DNS secundario como respaldo estricto, pero sí ofrece redundancia práctica para la casa.
+Esto no es un failover perfecto porque muchos clientes no tratan el DNS secundario como respaldo estricto, pero sí mantiene salida a Internet si el `Pi-hole` primario falla. `orangepi5-ultra` sigue siendo secundario arquitectónico para validación, sincronización futura y resiliencia, pero no como `DNS 2` del router en la primera etapa segura.
 
 ### Fase posterior opcional
 
@@ -1599,8 +1600,11 @@ ai-gpu:
 nas:
   bóveda fría, NFS, backups, snapshots, bibliotecas maestras y archivo final
 
-orangepi5-max/a/b:
-  redundancia ligera, watchdogs, workers, DNS extra opcional
+orangepi5-max:
+  redundancia ligera, worker ARM, Pi-hole terciario opcional
+
+orangepi5-a/b:
+  redundancia ligera, watchdogs y workers stateless
 ```
 
 Decisiones nuevas clave:

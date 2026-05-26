@@ -25,12 +25,14 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 
 - no habrá segunda subred en esta fase;
 - `DHCP reservations` en el `ER707-M2` son la fuente de verdad para IPs fijas;
+- el `ER707-M2` mantiene siempre el servicio DHCP; `Pi-hole` no asume ese rol;
 - no se introducen VLANs en esta fase;
 - los nodos principales deben seguir accesibles por IP incluso si DNS local falla.
 - la LAN de `Colibrí` sigue siendo local a la sede, pero la arquitectura general ya asume `split-horizon DNS`
 - `WireGuard site-to-site` será parte del backbone multi-site, separado de `Tailscale`
 - el cambio a IPs objetivo se hace por etapas, nunca junto con el cambio de DNS del router
 - primero se validan servicios en IP actual, luego se mueve DHCP/IP, y solo después se actualizan referencias aguas arriba
+- el primer cutover de DNS del router debe mantener un resolvedor público de emergencia como `DNS2`
 
 ## Interfaces y valores
 
@@ -55,10 +57,12 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 - `SSH` usa llave y `Tailscale` como acceso administrativo complementario;
 - el sitio resuelve nombres globales hacia su proxy local mediante DNS local.
 - la migración a IP objetivo se hace host por host o por grupo pequeño, con validación antes de continuar
+- el cambio de DNS del router ocurre en ventana separada y no altera el rol DHCP del `ER707-M2`
 
 ### Falla
 
 - si DNS local cae, operación por IP directa;
+- si falla `Pi-hole`, el router conserva DHCP y los clientes aún pueden resolver usando el fallback público configurado;
 - si `management` cae, acceso sigue por IP o `Tailscale`;
 - si una reserva DHCP falla, el host sigue siendo alcanzable por IP temporal y se corrige desde router.
 - si el enlace inter-sede cae, `Colibrí` sigue operando localmente.
@@ -70,6 +74,20 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 - cada nodo responde por `SSH` en su IP actual o final durante toda la transición;
 - todas las reservas aplicadas en router una vez que las capas superiores ya fueron probadas;
 - `colibri-router-baseline.md` refleja estado aplicado, no solo objetivo.
+
+## Prechecks mínimos
+
+- export o captura del estado actual del router
+- CSV de reservas validado sin MACs ni IPs duplicadas
+- pool DHCP libre y coherente con las reservas
+- acceso `SSH` a `management` y al menos un worker canary
+- confirmación de que no habrá cambio simultáneo de DNS del router
+
+## Rollback
+
+- si una reserva falla, el host sigue por DHCP temporal y se corrige desde el router
+- si un grupo pequeño de nodos no toma su IP, se aborta la tanda y no se continúa con más reboots
+- si un cambio de red degrada acceso administrativo, rollback manual en el router al estado exportado o capturado
 
 ## Dependencias previas
 

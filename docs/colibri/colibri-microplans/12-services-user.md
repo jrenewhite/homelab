@@ -73,6 +73,19 @@ Orden de prioridad:
 - ningún servicio de usuario tiene storage ambiguo.
 - cada app tiene ruta de despliegue staged y criterio claro para volverse visible a usuarios
 
+## Prechecks mínimos
+
+- app validada por IP privada
+- storage local y backup básico definidos
+- identidad y política `SSO` o excepción local definidas
+- no mezclar publicación de la app con cambios de DNS, proxy o identidad de otra app
+
+## Rollback
+
+- retirar la app de exposición y volverla privada
+- volver temporalmente a cuenta local o auth previa si el cambio fue de identidad
+- si una app falla, no se promueve la siguiente en la misma ventana
+
 ## Dependencias previas
 
 - storage local-first

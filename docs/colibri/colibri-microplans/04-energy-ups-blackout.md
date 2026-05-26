@@ -63,6 +63,20 @@ Definir la política eléctrica y de degradación ordenada de `Colibrí`.
 - ninguna automatización crítica depende de `management` como master de blackout.
 - existe una secuencia de prueba segura que no apaga nodos útiles en la primera validación
 
+## Prechecks mínimos
+
+- topología UPS confirmada físicamente
+- mapa de nodos por UPS y compatibilidad Linux confirmados
+- `NUT` primero en modo observación
+- blackout test plan aprobado y con ventana controlada
+- reglas explícitas que impidan wake de `nas` y `ai-gpu` en batería
+
+## Rollback
+
+- volver `NUT` y el bot a modo observación
+- desactivar automatismos de apagado o wake
+- si una prueba genera comportamiento inesperado, abortar y restaurar operación manual
+
 ## Dependencias previas
 
 - red estable

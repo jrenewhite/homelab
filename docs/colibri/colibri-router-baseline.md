@@ -7,6 +7,7 @@ Baseline objetivo para el `TP-Link ER707-M2` en `Standalone Mode`.
 - LAN unica: `192.168.0.1/24`
 - DHCP dinamico: `192.168.0.100 - 192.168.0.199`
 - Subred `192.168.10.0/24` retirada
+- el `ER707-M2` conserva el rol de servidor DHCP en toda fase
 
 ## Reservas DHCP objetivo
 
@@ -27,10 +28,11 @@ Baseline objetivo para el `TP-Link ER707-M2` en `Standalone Mode`.
 - El equipo ofrece `ssh-rsa`
 - Autenticacion por `SSH` confirmada con el usuario administrativo del panel web
 - El pool DHCP efectivo se llama `LAN`
-- El DNS DHCP actual ya entrega:
-  - `pri_dns 192.168.0.161`
-  - `snd_dns 192.168.0.151`
-- Las reservas DHCP objetivo siguen pendientes de aplicar
+- El baseline seguro aprobado para DNS LAN es:
+  - `pri_dns 192.168.0.10` cuando `Pi-hole` primario esté validado
+  - `snd_dns 1.1.1.1` como fallback de emergencia
+- `orangepi5-ultra` permanece como `Pi-hole` secundario de arquitectura, pero no como `snd_dns` del router en la primera etapa segura
+- Las reservas DHCP objetivo siguen pendientes de aplicar o reimportar según el estado del router
 
 ## Checklist manual en router
 
@@ -38,5 +40,9 @@ Baseline objetivo para el `TP-Link ER707-M2` en `Standalone Mode`.
 - confirmar `Standalone Mode`
 - confirmar LAN `192.168.0.1/24`
 - confirmar rango DHCP `192.168.0.100 - 192.168.0.199`
+- confirmar que DHCP sigue habilitado en el router y que no se delega a `Pi-hole`
+- configurar DNS LAN de forma segura:
+  - temporalmente `1.1.1.1` / `1.0.0.1` durante recuperación
+  - objetivo de etapa 1: `192.168.0.10` / `1.1.1.1`
 - crear las reservas DHCP de la tabla
 - eliminar cualquier reserva residual de `192.168.10.0/24`

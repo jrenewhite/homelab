@@ -90,6 +90,19 @@ Definir una estrategia única de autenticación para `Colibrí`, alineada al mar
 - las excepciones quedan listadas, no implícitas
 - la seguridad de red no depende exclusivamente de `SSO`
 
+## Prechecks mínimos
+
+- cuenta break-glass local definida
+- el servicio objetivo soporta `OIDC`, `SAML` o bypass documentado
+- acceso privado al servicio validado antes de hacerlo depender del `SSO`
+- no mezclar con cambio de proxy, DNS o publicación externa el mismo día
+
+## Rollback
+
+- volver temporalmente a cuenta local o bypass privado
+- retirar auth por proxy si rompe el login
+- si una app queda inaccesible por `SSO`, no continuar con más apps en la misma ventana
+
 ## Dependencias previas
 
 - DNS

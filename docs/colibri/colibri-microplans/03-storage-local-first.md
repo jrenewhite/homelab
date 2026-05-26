@@ -79,6 +79,20 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 - la arquitectura por servicio declara claramente local, sync y archivo final;
 - wake/sync/sleep queda documentado antes de implementación.
 
+## Prechecks mínimos
+
+- mounts y rutas actuales inventariados
+- storage local validado con datos de prueba
+- servicio afectado identificable y detenible
+- no mezclar el cambio con DNS, IPs o túneles
+- backup o snapshot lógico del estado de la app antes de mover rutas reales
+
+## Rollback
+
+- volver la app a su ruta local previa
+- desmontar o deshabilitar temporalmente el sync nuevo sin tocar datos calientes
+- si un mount final falla, la app debe seguir local; si no lo hace, el cambio se revierte y no avanza
+
 ## Dependencias previas
 
 - identidades compartidas

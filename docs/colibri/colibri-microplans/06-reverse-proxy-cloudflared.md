@@ -67,6 +67,20 @@ Definir exposición externa e interna de servicios con `Caddy` y `cloudflared`.
 - lista explícita de servicios solo por Tailscale aprobada;
 - takeover limitado entre `management` y `ultra` documentado.
 
+## Prechecks mínimos
+
+- backend funcional por IP privada o URL interna
+- DNS local coherente para el hostname a publicar
+- secreto de Cloudflare disponible y con permisos mínimos
+- servicio aún no expuesto al público general
+- no mezclar el publish con cambio de DNS local o renumeración del host
+
+## Rollback
+
+- retirar el hostname del proxy o del túnel
+- dejar el servicio solo por acceso privado
+- si falla una publicación, no se toca el resto de hostnames en la misma ventana
+
 ## Dependencias previas
 
 - DNS
