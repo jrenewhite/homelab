@@ -2,11 +2,11 @@
 
 ## Propósito
 
-Definir una estrategia única de autenticación para `Colibrí` que reduzca cuentas locales dispersas y mantenga una política clara para servicios compatibles y no compatibles.
+Definir una estrategia única de autenticación para `Colibrí`, alineada al marco multi-site, que reduzca cuentas locales dispersas y mantenga una política clara para servicios compatibles y no compatibles.
 
 ## Estado actual
 
-- no hay proveedor de identidad aprobado aún
+- `authentik` ya fue elegido como dirección preferida
 - hoy las cuentas siguen siendo por servicio o por nodo
 - ya existe base de identidades de sistema Linux, pero no identidad federada de apps
 
@@ -19,7 +19,7 @@ Definir una estrategia única de autenticación para `Colibrí` que reduzca cuen
 ## Decisiones cerradas
 
 - sí, `SSO` es viable y deseable para `Colibrí`
-- la opción preferida para fase de diseño es `authentik`
+- `authentik` es la plataforma aprobada para `SSO`
 - `authentik` se prefiere sobre `Keycloak` por ergonomía de homelab y sobre `Authelia` como identidad principal porque `authentik` cubre mejor `OIDC`, `SAML` y auth por proxy dentro de una misma plataforma
 - `SSO` no sustituye cuentas locales de emergencia para administración break-glass
 - no todos los servicios soportarán integración directa; se usará esta jerarquía:
@@ -37,6 +37,8 @@ Definir una estrategia única de autenticación para `Colibrí` que reduzca cuen
 - publicación:
   - acceso interno por `Caddy`
   - exposición externa solo si se aprueba explícitamente
+- URL canónica: `auth.white-enciso.com`
+- inicialmente, `authentik` vive en `Colibrí` y `Perú` lo consume como servicio central hasta que exista réplica aprobada
 
 ### Protocolos objetivo
 
@@ -59,7 +61,7 @@ Definir una estrategia única de autenticación para `Colibrí` que reduzca cuen
 | `Vaultwarden` | cuenta local al inicio; revisar integración posterior si aporta valor |
 | `Paperless` | preferir `OIDC` |
 | `Immich` | preferir `OIDC` |
-| `Matrix` | integración federada si el stack elegido lo soporta de forma limpia; si no, excepción documentada |
+| `Matrix` | no forzar `SSO` si complica el modelo federado multi-homeserver; excepción documentada si aplica |
 | `Home Assistant` | revisar si conviene `OIDC`; no asumirlo obligatorio |
 | `Portainer` | mantener acceso privado; `SSO` opcional |
 | paneles administrativos | privados por red/Tailscale primero; `SSO` complementa, no reemplaza |
@@ -77,6 +79,7 @@ Definir una estrategia única de autenticación para `Colibrí` que reduzca cuen
 - si cae `authentik`, los servicios con sesión vigente pueden seguir operando según su propio comportamiento
 - nuevos logins federados pueden fallar
 - servicios con cuenta local de excepción conservan camino de recuperación
+- si `Perú` queda aislado de `Colibrí`, los servicios que dependan de `authentik` central deben tener política explícita de degradación o bypass local
 
 ## Aceptación
 

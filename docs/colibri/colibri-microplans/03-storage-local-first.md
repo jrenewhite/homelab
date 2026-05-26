@@ -23,6 +23,8 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 - `nas` nunca es dependencia runtime obligatoria de apps críticas;
 - `/srv/media` y `/srv/docs` son namespaces finales, no working storage permanente;
 - `sync` puede ser programado o bajo demanda, pero nunca requisito para que arranque una app.
+- el modelo multi-site es `activo-local por sitio + ventanas de sincronización`
+- la sincronización entre `Colibrí` y `Perú` se hace por ventanas de bajo tráfico sostenido
 
 ## Interfaces
 
@@ -58,6 +60,7 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 - genera output en staging o sync-out;
 - una ventana controlada despierta `nas`;
 - sincroniza;
+- si aplica, replica a la otra sede por `WireGuard` en una ventana separada o coordinada;
 - `nas` vuelve a dormirse si no hay actividad.
 
 ### Falla
@@ -65,6 +68,7 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 - si `nas` no despierta, la app sigue local;
 - si `nas` está despierto pero NFS cae, no se afecta el estado caliente;
 - si blackout ocurre, se cancelan wake jobs y syncs no esenciales.
+- si `Perú` está caído o aislado, `Colibrí` sigue local y difiere replicación inter-sede.
 
 ## Aceptación
 

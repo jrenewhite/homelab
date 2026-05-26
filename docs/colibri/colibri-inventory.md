@@ -90,11 +90,16 @@ Este documento separa:
 - Red activa: `Ethernet 192.168.0.151`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
-- `119.2G NVMe ORICO`
-- el NVMe tiene particiones creadas y una marcada como `LVM2_member`
+- `119.2G NVMe ORICO` reformateado a `ext4`
+- montado en `/srv/storage`
+- directorios base:
+  - `/srv/storage/appdata`
+  - `/srv/storage/db`
+  - `/srv/storage/tmp`
 - software base:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
+- `colibri-cpufreq-tune.service` activo con tope `2016000` en clusters grandes
 
 ### `orangepi5-max`
 
@@ -103,11 +108,16 @@ Este documento separa:
 - Red activa: `Ethernet 192.168.0.152`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
-- `119.2G NVMe ORICO`
-- el NVMe tiene particiones y una particion `btrfs` sin montar
+- `119.2G NVMe ORICO` reformateado a `ext4`
+- montado en `/srv/storage`
+- directorios base:
+  - `/srv/storage/appdata`
+  - `/srv/storage/db`
+  - `/srv/storage/tmp`
 - software base:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
+- `colibri-cpufreq-tune.service` activo con tope `2016000` en clusters grandes
 
 ### `orangepi5-a` - `192.168.0.153`
 

@@ -1,11 +1,12 @@
 # Colibrí — Plan Maestro
 
-Documento maestro de arquitectura aprobada para la casa `Colibrí`.
+Documento maestro de arquitectura aprobada para la casa `Colibrí`, dentro de la plataforma multi-site `white-enciso.com`.
 
-Este documento es la fuente de verdad principal para diseño y decisiones. Los demás documentos se usan así:
+Este documento es la fuente de verdad principal para diseño y decisiones del sitio `Colibrí`. Los demás documentos se usan así:
 
-- [colibri-inventory.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-inventory.md): estado factual observado
-- [colibri-router-baseline.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-router-baseline.md): baseline del router
+- [white-enciso-multisite.md](/home/jrenewhite/Projects/homelab/docs/white-enciso-multisite.md): marco compartido multi-site
+- [colibri-inventory.md](./colibri-inventory.md): estado factual observado
+- [colibri-router-baseline.md](./colibri-router-baseline.md): baseline del router
 - `colibri-microplans/`: anexos `decision complete` por subsistema
 
 ## 1. Objetivo
@@ -15,6 +16,7 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 ## 2. Principios rectores
 
 - `Docs` son la fuente de verdad principal.
+- `Colibrí` es el sitio principal; `Perú` es el segundo sitio previsto.
 - `Ansible` es implementación derivada y migrará gradualmente a `management`.
 - `Ansible` debe construirse como librería reutilizable por capas, no como colección de cambios ad hoc.
 - `git` es la bitácora de diseño, decisiones y evolución operacional del homelab.
@@ -25,6 +27,10 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 - `root_squash` se mantiene en `NFS`.
 - Permisos y acceso se resuelven con `UID/GID` fijos, grupos compartidos, `setgid` y `ACLs`.
 - `SSO` es requisito arquitectónico para servicios de usuario y administración compatibles.
+- la experiencia normal de usuario usa las mismas URLs globales bajo `white-enciso.com`
+- la resolución local será `split-horizon` por sitio
+- el modelo operativo preferido es `activo-local por sitio + ventanas de sincronización`
+- `WireGuard` será el backbone privado entre sedes; `Tailscale` conserva el rol de acceso administrativo
 - La energía manda la degradación: blackout y UPS tienen prioridad sobre conveniencia de apps.
 
 ## 3. Roles definitivos por nodo
@@ -36,8 +42,8 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 | `ai-gpu` | GPU pesada, Jellyfin GPU, Immich ML, OCR, Whisper, LLM grande, batch | bajo demanda |
 | `nas` | `NFS`, backups, librería final, sync target, archivo frío | despertable |
 | `orangepi5-ultra` | Home Assistant, DNS secundario, proxy/tunnel backup, sentinel secundario | 24/7 |
-| `orangepi5-max` | sentinel auxiliar, worker ARM, tareas ligeras | 24/7 |
-| `orangepi5-a` | watchdog, worker stateless, DNS terciario opcional | 24/7 |
+| `orangepi5-max` | sentinel auxiliar, worker ARM, DNS terciario opcional | 24/7 |
+| `orangepi5-a` | watchdog, worker stateless, tareas ligeras | 24/7 |
 | `orangepi5-b` | watchdog, worker stateless, healthchecks | 24/7 |
 
 ## 4. Restricciones duras
@@ -48,6 +54,7 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 - El blackout no puede despertar `nas` ni `ai-gpu`.
 - `management` no será `NUT master`.
 - Ningún panel administrativo sensible debe exponerse por Internet.
+- `Matrix` no usará el mismo homeserver activo-local en ambas sedes; si existe en ambas, serán homeservers federados distintos.
 
 ## 5. Orden macro de implementación futura
 
@@ -69,13 +76,14 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 ## 6. Dependencias entre subsistemas
 
 - DNS depende de red estable y direccionamiento final.
+- la capa por sitio depende del marco multi-site y no puede contradecir la política de URLs globales.
 - Proxy y túneles dependen de DNS, IPs finales y política de exposición.
 - `SSO` depende de DNS, proxy, política de exposición y decisión de almacenamiento local para su propio estado.
 - `Ansible` depende de acceso `SSH`, identidades y hostnames estables.
 - La disciplina de `git` depende de estructura documental estable, pero debe preceder el despliegue sostenido por `Ansible`.
-- `nas` despertable depende de storage local-first ya cerrado por servicio.
+- `nas` despertable depende de storage local-first ya cerrado por servicio y de ventanas de sync entre sedes.
 - Bot de resiliencia depende de blackout, DNS, proxy y canal alterno ya definidos.
-- Apps dependen de permisos, storage local-first, política de energía y estrategia de `SSO` ya cerradas.
+- Apps dependen de permisos, storage local-first, política de energía, estrategia de `SSO` y reglas multi-site ya cerradas.
 
 ## 7. Criterios de aceptación globales
 
@@ -100,17 +108,17 @@ La fase de diseño solo se considera completa cuando:
 
 ## 8. Índice de microplanes
 
-- [01-network-and-addressing.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/01-network-and-addressing.md)
-- [02-identities-and-permissions.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/02-identities-and-permissions.md)
-- [03-storage-local-first.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/03-storage-local-first.md)
-- [04-energy-ups-blackout.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/04-energy-ups-blackout.md)
-- [05-dns-pihole.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/05-dns-pihole.md)
-- [06-reverse-proxy-cloudflared.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/06-reverse-proxy-cloudflared.md)
-- [07-ansible-transition.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/07-ansible-transition.md)
-- [08-repository-and-git-workflow.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/08-repository-and-git-workflow.md)
-- [09-identity-and-sso.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/09-identity-and-sso.md)
-- [10-sentinel-bot.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/10-sentinel-bot.md)
-- [11-services-core.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/11-services-core.md)
-- [12-services-user.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/12-services-user.md)
-- [13-media-ai-jobs.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/13-media-ai-jobs.md)
-- [14-observability-alerting.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans/14-observability-alerting.md)
+- [01-network-and-addressing.md](./colibri-microplans/01-network-and-addressing.md)
+- [02-identities-and-permissions.md](./colibri-microplans/02-identities-and-permissions.md)
+- [03-storage-local-first.md](./colibri-microplans/03-storage-local-first.md)
+- [04-energy-ups-blackout.md](./colibri-microplans/04-energy-ups-blackout.md)
+- [05-dns-pihole.md](./colibri-microplans/05-dns-pihole.md)
+- [06-reverse-proxy-cloudflared.md](./colibri-microplans/06-reverse-proxy-cloudflared.md)
+- [07-ansible-transition.md](./colibri-microplans/07-ansible-transition.md)
+- [08-repository-and-git-workflow.md](./colibri-microplans/08-repository-and-git-workflow.md)
+- [09-identity-and-sso.md](./colibri-microplans/09-identity-and-sso.md)
+- [10-sentinel-bot.md](./colibri-microplans/10-sentinel-bot.md)
+- [11-services-core.md](./colibri-microplans/11-services-core.md)
+- [12-services-user.md](./colibri-microplans/12-services-user.md)
+- [13-media-ai-jobs.md](./colibri-microplans/13-media-ai-jobs.md)
+- [14-observability-alerting.md](./colibri-microplans/14-observability-alerting.md)

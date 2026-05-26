@@ -18,6 +18,7 @@ Definir el reparto de media, IA, indexing, OCR y procesamiento pesado.
 - `Immich ML` en `ai-gpu`
 - `Hermes` liviano en `services`
 - LLM grande y OCR/transcripción en `ai-gpu`
+- `Navidrome`, `Audiobookshelf`, `Kavita`, `Tube Archivist` y `Jellyseerr` siguen política local-first por sitio
 
 ## Decisiones cerradas
 
@@ -26,6 +27,7 @@ Definir el reparto de media, IA, indexing, OCR y procesamiento pesado.
 - biblioteca final vive en `nas:/srv/media`
 - staging y trabajo caliente viven en `services`
 - `ai-gpu` no se despierta en blackout
+- la experiencia normal usa URLs globales, pero cada sitio sirve su librería local o staging local
 
 ## Matriz resumida
 
@@ -33,6 +35,11 @@ Definir el reparto de media, IA, indexing, OCR y procesamiento pesado.
 |---|---|---|---|
 | Arr stack | `services` | local | archive final |
 | Jellyfin | `ai-gpu` | local/hot + biblioteca final | sí, no runtime obligatoria para arranque |
+| Navidrome | `services` | local/hot | biblioteca final y sync posterior |
+| Jellyseerr | `services` | local | no directa |
+| Audiobookshelf | `services` | local | opcional |
+| Kavita | `services` | local | opcional |
+| Tube Archivist | `services` | local | archive posterior |
 | Immich core | `services` | local | archive/política posterior |
 | Immich ML | `ai-gpu` | local | no directa |
 | LLM grande | `ai-gpu` | local | no |

@@ -1349,12 +1349,13 @@ guest.colibri.lan
 
 ```text
 Bienvenido a Colibrí
-- Wi-Fi de invitados / QR
 - reglas básicas de red
 - contacto de José René
 - botón para pedir ayuda
 - estado básico de internet
 - acceso a servicios solo si hay cuenta de invitado
+- probablemente musica familiar de navidrome
+- probablemente Jellyfin familiar
 ```
 
 ### Contenido no permitido
@@ -1456,15 +1457,15 @@ Esto se logra con split-horizon DNS / split DNS.
 Pi-hole responderá localmente:
 
 ```text
-jellyfin.white-enciso.com   -> 192.168.0.10
-matrix.white-enciso.com    -> 192.168.0.10
-home.white-enciso.com      -> 192.168.0.10
-hermes.white-enciso.com    -> 192.168.0.10
-paperless.white-enciso.com -> 192.168.0.10
-immich.white-enciso.com    -> 192.168.0.10
-navidrome.white-enciso.com -> 192.168.0.10
-guest.white-enciso.com     -> 192.168.0.10
-ha.white-enciso.com        -> 192.168.0.51
+jellyfin.white-enciso.com  -> 192.168.0.XX
+matrix.white-enciso.com    -> 192.168.0.XX
+home.white-enciso.com      -> 192.168.0.XX
+hermes.white-enciso.com    -> 192.168.0.XX
+paperless.white-enciso.com -> 192.168.0.XX
+immich.white-enciso.com    -> 192.168.0.XX
+navidrome.white-enciso.com -> 192.168.0.XX
+guest.white-enciso.com     -> 192.168.0.XX
+ha.white-enciso.com        -> 192.168.0.XX
 ```
 
 Fase posterior con VIP:
@@ -1492,7 +1493,7 @@ Cloudflare DNS apuntará los hostnames al túnel `colibri`.
 ```text
 jellyfin.white-enciso.com
   ↓
-Pi-hole local responde 192.168.0.10
+Pi-hole local responde 192.168.0.XX
   ↓
 Caddy en management
   ↓
@@ -1519,27 +1520,27 @@ backend correspondiente
 
 ```caddyfile
 jellyfin.white-enciso.com {
-    reverse_proxy 192.168.0.40:8096
+    reverse_proxy 192.168.0.XX:8096
 }
 
 matrix.white-enciso.com {
-    reverse_proxy 192.168.0.30:8008
+    reverse_proxy 192.168.0.XX:8008
 }
 
 home.white-enciso.com {
-    reverse_proxy 192.168.0.10:3000
+    reverse_proxy 192.168.0.XX:3000
 }
 
 hermes.white-enciso.com {
-    reverse_proxy 192.168.0.30:<puerto>
+    reverse_proxy 192.168.0.XX:<puerto>
 }
 
 navidrome.white-enciso.com {
-    reverse_proxy 192.168.0.30:<puerto>
+    reverse_proxy 192.168.0.XX:<puerto>
 }
 
 ha.white-enciso.com {
-    reverse_proxy 192.168.0.51:8123
+    reverse_proxy 192.168.0.XX:8123
 }
 ```
 
@@ -1573,6 +1574,8 @@ grafana.white-enciso.com
 uptime.white-enciso.com
 admin.white-enciso.com
 ```
+
+Considerar algo que bloquee ataques en los servidores 
 
 ---
 

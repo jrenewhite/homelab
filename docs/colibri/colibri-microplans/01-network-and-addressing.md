@@ -11,13 +11,15 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 - reservas DHCP objetivo documentadas pero no aplicadas
 - acceso `SSH` funcional a los nodos principales
 - nombres de host actuales ya estabilizados
+- `Perú` aún no está configurado, pero el diseño ya debe tolerar operación multi-site
 
 ## Objetivo final
 
 - router con reservas DHCP aplicadas;
 - todos los nodos accesibles por su IP final;
 - una sola LAN operativa;
-- acceso administrativo consistente por `SSH`, `Tailscale` y DNS local donde aplique.
+- acceso administrativo consistente por `SSH`, `Tailscale` y DNS local donde aplique;
+- base lista para convivir con un segundo sitio sin cambiar la UX de URLs globales.
 
 ## Decisiones cerradas
 
@@ -25,6 +27,8 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 - `DHCP reservations` en el `ER707-M2` son la fuente de verdad para IPs fijas;
 - no se introducen VLANs en esta fase;
 - los nodos principales deben seguir accesibles por IP incluso si DNS local falla.
+- la LAN de `Colibrí` sigue siendo local a la sede, pero la arquitectura general ya asume `split-horizon DNS`
+- `WireGuard site-to-site` será parte del backbone multi-site, separado de `Tailscale`
 
 ## Interfaces y valores
 
@@ -46,13 +50,15 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 
 - cliente obtiene IP por DHCP;
 - reserva fija ata MAC a IP objetivo;
-- `SSH` usa llave y `Tailscale` como acceso administrativo complementario.
+- `SSH` usa llave y `Tailscale` como acceso administrativo complementario;
+- el sitio resuelve nombres globales hacia su proxy local mediante DNS local.
 
 ### Falla
 
 - si DNS local cae, operación por IP directa;
 - si `management` cae, acceso sigue por IP o `Tailscale`;
 - si una reserva DHCP falla, el host sigue siendo alcanzable por IP temporal y se corrige desde router.
+- si el enlace inter-sede cae, `Colibrí` sigue operando localmente.
 
 ## Aceptación
 
