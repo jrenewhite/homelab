@@ -22,6 +22,7 @@ Definir el contrato completo del bot de resiliencia antes de implementarlo.
   - `orangepi5-ultra` = `ROLE=secondary`
 - implementación futura empaquetada como imagen Docker propia
 - takeover solo limitado, no control total simétrico
+- el bot entra primero en modo observación y alerta; las acciones automáticas se habilitan después
 
 ## Interfaces
 
@@ -100,6 +101,7 @@ Definir el contrato completo del bot de resiliencia antes de implementarlo.
 - roles primary/secondary cerrados;
 - límites de autoridad documentados;
 - no hay ambigüedad sobre eventos, acciones ni fallback.
+- existe un camino de activación gradual de observación a acción
 
 ## Dependencias previas
 

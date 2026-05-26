@@ -13,11 +13,11 @@ Este documento separa:
 | Hostname | IP actual | MAC | SO | Arquitectura | Modelo | Notas |
 |---|---|---|---|---|---|---|
 | `ai-gpu` | `192.168.0.103` | `58:47:CA:7F:84:B5` | `Ubuntu 26.04 LTS` | `x86_64` | `Micro Computer (HK) Tech Limited / MotherBoard Series` | Nodo GPU, probablemente el `Minisforum 790S7` |
-| `management` | `192.168.0.161` | `C4:65:16:AC:AB:37` | `Ubuntu 26.04 LTS` | `x86_64` | `HP EliteDesk 800 G4 DM 35W (TAA)` | `EliteDesk`, `Docker` y `Ansible` instalados, `NUT` instalado y deshabilitado hasta configuracion |
+| `management` | `192.168.0.161` | `C4:65:16:AC:AB:37` | `Ubuntu 26.04 LTS` | `x86_64` | `HP EliteDesk 800 G4 DM 35W (TAA)` | `EliteDesk`, `Docker` y `Ansible` instalados, `NUT` instalado y deshabilitado, `Pi-hole` staged en `192.168.0.161:53` y UI en `:8080` |
 | `nas` | `192.168.0.136` | `C8:FF:BF:05:F4:46` | `Debian GNU/Linux 13 (trixie)` | `x86_64` | `WTR PRO` | `OpenMediaVault` con namespaces `media` y `docs` ya exportados por `NFS` |
 | `services` | `192.168.0.155` | `58:47:CA:79:08:69` | `Ubuntu 26.04 LTS` | `x86_64` | `EliteMini Series` | `UM890`, `Docker` instalado, mounts `NFS` activos para `media/docs` |
-| `orangepi5-ultra` | `192.168.0.151` | `C0:74:2B:FC:59:86` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Ultra` | Orange Pi 5 Ultra, `Docker` operativo |
-| `orangepi5-max` | `192.168.0.152` | `C0:74:2B:FD:71:43` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Max` | Orange Pi 5 Max, `Docker` operativo |
+| `orangepi5-ultra` | `192.168.0.151` | `C0:74:2B:FC:59:86` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Ultra` | Orange Pi 5 Ultra, `Docker` operativo, `Pi-hole` secundario staged en `192.168.0.151:53` y UI en `:8080` |
+| `orangepi5-max` | `192.168.0.152` | `C0:74:2B:FD:71:43` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Max` | Orange Pi 5 Max, `Docker` operativo, `Pi-hole` terciario staged en `192.168.0.152:53` y UI en `:8080` |
 | `orangepi5-a` | `192.168.0.153` | `C6:CC:84:3D:E2:67` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Orange Pi 5, `Docker` operativo |
 | `orangepi5-b` | `192.168.0.154` | `C6:87:B3:C0:55:95` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Segunda Orange Pi 5, `Docker` operativo |
 
@@ -51,8 +51,18 @@ Este documento separa:
 - `Docker 29.1.3`
 - `Docker Compose 2.40.3`
 - `Ansible core 2.20.1`
+- `expect` instalado para automatización segura del router
 - `nut-client` y `nut-server` instalados
 - `NUT` deshabilitado hasta definir UPS y configuracion
+- `Pi-hole` staged:
+  - DNS en `192.168.0.161:53`
+  - UI en `http://192.168.0.161:8080/admin`
+  - baseline de listas: `OISD small`
+- automatización staged de DNS:
+  - helper `router-cli.expect` desplegado en `/opt/colibri/bin`
+  - script `router-dns-cutover-with-rollback.sh` desplegado en `/opt/colibri/bin`
+  - secreto local esperado en `/opt/colibri-secrets/router.env`
+  - dry-run lógico validado con `orangepi5-ultra` como canary
 
 ### `nas` - `AOOSTAR WTR PRO`
 
@@ -100,6 +110,12 @@ Este documento separa:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
 - `colibri-cpufreq-tune.service` activo con tope `2016000` en clusters grandes
+- `Pi-hole` secundario staged:
+  - DNS en `192.168.0.151:53`
+  - UI en `http://192.168.0.151:8080/admin`
+  - baseline de listas: `OISD small`
+- canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
+- `sudoers` acotado para ejecución sin password del canary checker
 
 ### `orangepi5-max`
 
@@ -118,6 +134,12 @@ Este documento separa:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
 - `colibri-cpufreq-tune.service` activo con tope `2016000` en clusters grandes
+- `Pi-hole` terciario staged:
+  - DNS en `192.168.0.152:53`
+  - UI en `http://192.168.0.152:8080/admin`
+  - baseline de listas: `OISD small`
+- canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
+- `sudoers` acotado para ejecución sin password del canary checker
 
 ### `orangepi5-a` - `192.168.0.153`
 

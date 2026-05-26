@@ -1,0 +1,62 @@
+#!/usr/bin/expect -f
+
+set timeout 30
+
+if {$argc < 4} {
+    puts stderr "usage: router-cli.expect <host> <user> <password> <mode> [commands...]"
+    exit 2
+}
+
+set host [lindex $argv 0]
+set user [lindex $argv 1]
+set password [lindex $argv 2]
+set mode [lindex $argv 3]
+set commands [lrange $argv 4 end]
+
+set prompt_user {>}
+set prompt_public {#}
+set prompt_any {(\(config[^\r\n]*\)#|#|>)}
+
+spawn ssh -tt \
+  -o StrictHostKeyChecking=no \
+  -o UserKnownHostsFile=/dev/null \
+  -o HostKeyAlgorithms=+ssh-rsa \
+  -o PubkeyAcceptedAlgorithms=+ssh-rsa \
+  -o PreferredAuthentications=password \
+  -o PubkeyAuthentication=no \
+  ${user}@${host}
+
+expect {
+    -re "yes/no" {
+        send "yes\r"
+        exp_continue
+    }
+    -re ".*password:" {
+        send "$password\r"
+    }
+}
+
+expect -re $prompt_user
+send "enable\r"
+expect -re $prompt_public
+
+if {$mode == "config"} {
+    send "config\r"
+    expect -re {\(config\)#}
+}
+
+foreach cmd $commands {
+    send -- "$cmd\r"
+    expect -re $prompt_any
+    puts $expect_out(buffer)
+}
+
+if {$mode == "config"} {
+    send "exit\r"
+    expect -re $prompt_public
+}
+
+send "exit\r"
+expect -re $prompt_user
+close
+wait

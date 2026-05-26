@@ -24,6 +24,8 @@ Definir exposición externa e interna de servicios con `Caddy` y `cloudflared`.
 - `SSO` no reemplaza al proxy; se integra detrás de `Caddy` o a través del proxy cuando aplique
 - internamente, cada sitio resuelve las mismas URLs globales hacia su proxy local
 - externamente, `Cloudflare` es la entrada y decide hacia sitio sano o preferido
+- primero se valida cada backend por IP o URL privada antes de publicarlo por proxy o túnel
+- no se publica un servicio por Cloudflare en la misma ventana que cambios de DNS local o IP del host
 - no se expone:
   - Portainer
   - admin NAS
@@ -51,6 +53,7 @@ Definir exposición externa e interna de servicios con `Caddy` y `cloudflared`.
 
 - Internet -> Cloudflare -> `cloudflared` -> `Caddy` -> backend interno
 - LAN local -> DNS local -> `Caddy` local -> backend local
+- cada hostname nuevo entra primero en validación privada, luego en exposición externa controlada
 
 ### Falla
 

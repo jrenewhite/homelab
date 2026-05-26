@@ -22,6 +22,7 @@ Definir la política eléctrica y de degradación ordenada de `Colibrí`.
 - `services` sí es `NUT master`
 - `orangepi5-ultra` es observador y takeover limitado
 - `nas` y `ai-gpu` no pueden despertarse si el sistema está en batería
+- los cambios de energía y blackout se validan primero en modo observación, luego en modo acción
 
 ## Interfaces
 
@@ -60,6 +61,7 @@ Definir la política eléctrica y de degradación ordenada de `Colibrí`.
 - existe runbook exacto por evento de energía;
 - roles `NUT` no se contradicen con la topología real de UPS;
 - ninguna automatización crítica depende de `management` como master de blackout.
+- existe una secuencia de prueba segura que no apaga nodos útiles en la primera validación
 
 ## Dependencias previas
 

@@ -26,6 +26,8 @@ Baseline objetivo para el `TP-Link ER707-M2` en `Standalone Mode`.
 - `SSH` del router esta expuesto en `192.168.0.1:22`
 - El equipo ofrece `ssh-rsa`
 - Autenticacion por `SSH` confirmada con el usuario administrativo del panel web
+- El pool DHCP efectivo se llama `LAN`
+- El DNS DHCP actual sigue sin valores explícitos (`dns1/dns2` unset)
 - Las reservas DHCP objetivo siguen pendientes de aplicar
 
 ## Checklist manual en router

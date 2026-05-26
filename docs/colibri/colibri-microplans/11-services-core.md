@@ -40,6 +40,8 @@ Servicios core por prioridad:
 - `Diun` vive en `management`
 - `Homepage` vive en `management`
 - `Emergency Homepage` vive en `ultra`
+- los servicios core se despliegan primero en modo privado o staged
+- no se introduce un servicio core nuevo el mismo día que un cambio mayor de IP, DNS o blackout
 
 ## Matriz por servicio
 
@@ -62,6 +64,7 @@ Servicios core por prioridad:
 
 - cada servicio tiene nodo, storage y dependencia cerrados;
 - ningún servicio core depende de `nas`.
+- existe orden de despliegue seguro y validación privada antes de hacerlo visible a clientes o Internet
 
 ## Dependencias previas
 

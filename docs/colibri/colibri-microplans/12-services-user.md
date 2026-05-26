@@ -37,6 +37,7 @@ Orden de prioridad:
 - toda app compatible debe evaluar `SSO` antes de aprobar cuenta local permanente
 - las URLs de experiencia normal serán globales bajo `white-enciso.com`
 - si un servicio existe en ambas sedes, se prefiere activo-local por sitio
+- ninguna app de usuario se publica a clientes hasta haber sido validada por IP privada o acceso administrativo
 
 ## Matriz resumida
 
@@ -70,6 +71,7 @@ Orden de prioridad:
 
 - cada app tiene nodo, storage, dependencia de `nas` y backup definidos;
 - ningún servicio de usuario tiene storage ambiguo.
+- cada app tiene ruta de despliegue staged y criterio claro para volverse visible a usuarios
 
 ## Dependencias previas
 

@@ -29,6 +29,8 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 - los nodos principales deben seguir accesibles por IP incluso si DNS local falla.
 - la LAN de `Colibrí` sigue siendo local a la sede, pero la arquitectura general ya asume `split-horizon DNS`
 - `WireGuard site-to-site` será parte del backbone multi-site, separado de `Tailscale`
+- el cambio a IPs objetivo se hace por etapas, nunca junto con el cambio de DNS del router
+- primero se validan servicios en IP actual, luego se mueve DHCP/IP, y solo después se actualizan referencias aguas arriba
 
 ## Interfaces y valores
 
@@ -52,6 +54,7 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 - reserva fija ata MAC a IP objetivo;
 - `SSH` usa llave y `Tailscale` como acceso administrativo complementario;
 - el sitio resuelve nombres globales hacia su proxy local mediante DNS local.
+- la migración a IP objetivo se hace host por host o por grupo pequeño, con validación antes de continuar
 
 ### Falla
 
@@ -59,11 +62,13 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 - si `management` cae, acceso sigue por IP o `Tailscale`;
 - si una reserva DHCP falla, el host sigue siendo alcanzable por IP temporal y se corrige desde router.
 - si el enlace inter-sede cae, `Colibrí` sigue operando localmente.
+- si un futuro cutover DNS falla, `management` ejecuta rollback automático al DNS anterior del router usando un secreto local no versionado
 
 ## Aceptación
 
-- todas las reservas aplicadas en router;
-- cada nodo responde por `SSH` en su IP final;
+- existe secuencia de migración sin corte para IPs finales;
+- cada nodo responde por `SSH` en su IP actual o final durante toda la transición;
+- todas las reservas aplicadas en router una vez que las capas superiores ya fueron probadas;
 - `colibri-router-baseline.md` refleja estado aplicado, no solo objetivo.
 
 ## Dependencias previas

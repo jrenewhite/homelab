@@ -28,6 +28,7 @@ Definir el reparto de media, IA, indexing, OCR y procesamiento pesado.
 - staging y trabajo caliente viven en `services`
 - `ai-gpu` no se despierta en blackout
 - la experiencia normal usa URLs globales, pero cada sitio sirve su librería local o staging local
+- ningún job pesado o publicación media se activa en la misma ventana que cambios de storage base o DNS
 
 ## Matriz resumida
 

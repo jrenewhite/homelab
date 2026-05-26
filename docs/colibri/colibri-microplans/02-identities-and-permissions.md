@@ -29,6 +29,8 @@ Definir el modelo único de identidad, permisos y acceso compartido entre nodos,
 - todo acceso compartido se basa en grupos funcionales;
 - `jrenewhite` es admin humano con acceso de escritura a `media/docs`;
 - `apps` es la identidad estándar para escritura de contenedores.
+- los cambios de identidad se aplican primero a usuarios y grupos, y solo después a servicios que dependan de ellos
+- no se cambia permisos y mounts críticos en la misma ventana que DNS o direccionamiento
 
 ## Interfaces
 
@@ -57,6 +59,7 @@ Definir el modelo único de identidad, permisos y acceso compartido entre nodos,
 
 - decidir si escribe en `media`, `docs`, o solo local;
 - si escribe a `NFS`, usar identidad compatible con `apps`.
+- validar primero con archivos de prueba antes de mover datos reales o contenedores productivos
 
 ## Aceptación
 

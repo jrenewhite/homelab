@@ -63,6 +63,15 @@ tailscale_apply: false
 containers_apply: false
 nut_apply: false
 nfs_mounts_apply: false
+pihole_apply: false
+
+pihole_timezone: America/Mexico_City
+pihole_upstreams: "1.1.1.1;1.0.0.1"
+pihole_api_password: "lk.ZX.0409"
+pihole_disable_default_stevenblack: true
+pihole_blocklists:
+  - url: https://small.oisd.nl
+    comment: "Colibri baseline: conservative community-recommended blocklist"
 
 router_baseline:
   lan_cidr: 192.168.0.1/24

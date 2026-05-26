@@ -27,6 +27,7 @@ Definir una estrategia única de autenticación para `Colibrí`, alineada al mar
   2. auth por proxy detrás de `Caddy` si es compatible
   3. cuenta local excepcional documentada
 - ningún servicio sensible se expone por Internet solo porque ya tiene `SSO`
+- la introducción de `SSO` nunca se hace en la misma ventana que cambios de proxy, DNS o publicación externa del mismo servicio
 
 ## Interfaces
 
@@ -73,6 +74,7 @@ Definir una estrategia única de autenticación para `Colibrí`, alineada al mar
 1. usuario entra al servicio
 2. el servicio delega autenticación a `authentik` o al proxy autenticado
 3. el servicio autoriza según claims, grupos o rol local
+4. antes de volver obligatoria la autenticación federada, se prueba con cuentas locales y acceso privado
 
 ### Falla
 

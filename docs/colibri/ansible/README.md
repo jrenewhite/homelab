@@ -26,6 +26,7 @@ Playbooks con riesgo o cambios destructivos se dejan protegidos por variables de
 - `nas_exports_apply=true`
 - `shared_identity_apply=true`
 - `nas_permissions_apply=true`
+- `pihole_apply=true`
 
 ## Notas
 
@@ -44,6 +45,16 @@ Playbooks con riesgo o cambios destructivos se dejan protegidos por variables de
 - `containers_base.yml` instala:
   - en `Ubuntu`: `docker.io` y `docker-compose-v2`
   - en `Debian/Armbian`: `docker.io` y `docker-compose`
+- `pihole.yml` despliega Pi-hole en:
+  - `management` como primario
+  - `orangepi5-ultra` como secundario
+  - `orangepi5-max` como terciario opcional
+  usando la IP LAN actual del host, UI en `:8080` y `OISD small` como baseline conservador.
+- `router_dns_safety.yml` prepara la etapa 1 segura:
+  - instala `expect` en `management`
+  - despliega el helper `router-cli.expect`
+  - despliega `router-dns-cutover-with-rollback.sh`
+  - despliega `dns-canary-check` y su `sudoers` en `ultra` y `max`
 - `nut_core.yml` instala `ansible`, `nut-client` y `nut-server` en `management`, pero la configuracion del UPS sigue pendiente.
 - `shared_identity.yml` crea identidades compartidas con `UID/GID` fijos para que `NFS` no rompa permisos entre hosts.
 - `nas_permissions.yml` aplica politica de `groups + setgid + ACLs` sobre `media/docs`.

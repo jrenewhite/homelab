@@ -34,6 +34,7 @@ Definir cómo `Ansible` pasa de borrador técnico local a sistema de control eje
 - fase de control:
   - `management` ejecuta `Ansible`
   - la máquina local queda como estación de edición/documentación y backup operacional
+- los playbooks con impacto de red, DNS, storage o energía deben soportar ejecución staged y validación entre pasos
 
 ## Interfaces
 
@@ -68,6 +69,7 @@ Definir cómo `Ansible` pasa de borrador técnico local a sistema de control eje
 5. copia a `management`
 6. validación desde `management`
 7. cutover de control
+8. ejecución por capas con pausas de validación
 
 ## Aceptación
 

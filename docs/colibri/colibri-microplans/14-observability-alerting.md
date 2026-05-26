@@ -27,6 +27,7 @@ Definir cómo `Colibrí` sabe que está sano, degradado o caído, y cómo avisa.
   - `nas`
   - `ai-gpu`
   - túnel/proxy
+- la observabilidad se valida primero en modo pasivo, antes de habilitar alertas ruidosas o automatismos
 
 ## Interfaces
 

@@ -1,0 +1,75 @@
+---
+- name: Prepare router DNS cutover safety tooling
+  hosts: management:arm
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Skip hosts outside router safety scope
+      ansible.builtin.meta: end_host
+      when: inventory_hostname not in ['management', 'orangepi5-ultra', 'orangepi5-max']
+
+    - name: Install expect on management
+      ansible.builtin.package:
+        name: expect
+        state: present
+      when: inventory_hostname == 'management'
+
+    - name: Ensure controller directories exist on management
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
+      loop:
+        - /opt/colibri
+        - /opt/colibri/bin
+        - /opt/colibri-secrets
+      when: inventory_hostname == 'management'
+
+    - name: Deploy router CLI expect helper
+      ansible.builtin.copy:
+        src: ../files/router-cli.expect
+        dest: /opt/colibri/bin/router-cli.expect
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0750"
+      when: inventory_hostname == 'management'
+
+    - name: Deploy router DNS cutover script
+      ansible.builtin.copy:
+        src: ../files/router-dns-cutover-with-rollback.sh
+        dest: /opt/colibri/bin/router-dns-cutover-with-rollback.sh
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0750"
+      when: inventory_hostname == 'management'
+
+    - name: Ensure canary script directory exists
+      ansible.builtin.file:
+        path: /usr/local/lib/colibri
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      when: inventory_hostname in ['orangepi5-ultra', 'orangepi5-max']
+
+    - name: Deploy canary checker
+      ansible.builtin.copy:
+        src: ../files/dns-canary-check.sh
+        dest: /usr/local/lib/colibri/dns-canary-check
+        owner: root
+        group: root
+        mode: "0755"
+      when: inventory_hostname in ['orangepi5-ultra', 'orangepi5-max']
+
+    - name: Allow passwordless sudo for canary checker
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/colibri-dns-canary
+        owner: root
+        group: root
+        mode: "0440"
+        content: |
+          jrenewhite ALL=(root) NOPASSWD: /usr/local/lib/colibri/dns-canary-check
+      when: inventory_hostname in ['orangepi5-ultra', 'orangepi5-max']

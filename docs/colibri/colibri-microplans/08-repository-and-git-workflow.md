@@ -25,6 +25,7 @@ Definir cómo se versiona la arquitectura de `Colibrí`, cómo se trazan decisio
 - cada cambio que altere arquitectura, permisos, storage, energía o exposición debe reflejarse primero en `docs/`
 - `Ansible` se versiona como implementación derivada, pero dentro del mismo repositorio
 - no se asume remoto obligatorio; el remoto es deseable pero no requisito de fase
+- los cambios operativos riesgosos deben dejar explícito si fueron `staged`, cómo se validaron y cuál era el rollback
 
 ## Interfaces
 
@@ -62,6 +63,7 @@ Definir cómo se versiona la arquitectura de `Colibrí`, cómo se trazan decisio
 3. se actualiza inventario factual
 4. se actualiza `Ansible` o runbook derivado
 5. se registra commit con impacto y alcance
+6. si el cambio fue visible a clientes, se documenta el orden de cutover y rollback
 
 ### Reutilización para otra casa
 

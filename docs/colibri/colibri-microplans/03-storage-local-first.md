@@ -25,6 +25,8 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 - `sync` puede ser programado o bajo demanda, pero nunca requisito para que arranque una app.
 - el modelo multi-site es `activo-local por sitio + ventanas de sincronización`
 - la sincronización entre `Colibrí` y `Perú` se hace por ventanas de bajo tráfico sostenido
+- ningún cambio de storage se hace simultáneamente con cambios de IP, DNS o túneles
+- primero se valida escritura local; luego sync; luego consumo opcional de archivo final
 
 ## Interfaces
 
@@ -62,6 +64,7 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 - sincroniza;
 - si aplica, replica a la otra sede por `WireGuard` en una ventana separada o coordinada;
 - `nas` vuelve a dormirse si no hay actividad.
+- cualquier cambio de mounts o política de sync se prueba primero con datos no críticos
 
 ### Falla
 

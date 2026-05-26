@@ -32,6 +32,14 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 - el modelo operativo preferido es `activo-local por sitio + ventanas de sincronización`
 - `WireGuard` será el backbone privado entre sedes; `Tailscale` conserva el rol de acceso administrativo
 - La energía manda la degradación: blackout y UPS tienen prioridad sobre conveniencia de apps.
+- Todo cambio operativo debe privilegiar continuidad de servicio, validación previa y rollback simple.
+- Nunca se cambia al mismo tiempo más de una capa crítica entre:
+  - direccionamiento/IPs
+  - DNS del router
+  - proxy/túneles
+  - identidad/SSO
+  - storage compartido
+- Primero se despliega en modo `staged`, luego se valida por acceso directo, y solo después se hace el cutover.
 
 ## 3. Roles definitivos por nodo
 
@@ -72,6 +80,13 @@ Antes de implementar más cambios, `Colibrí` debe quedar completamente especifi
 12. Servicios de usuario
 13. Media, IA y jobs pesados
 14. Observabilidad y alertas
+
+Cada fase debe ejecutarse así:
+1. preparar y desplegar en paralelo sin impacto a clientes;
+2. validar por IP/ruta directa o acceso privado;
+3. aplicar cambio visible a clientes en una sola capa;
+4. observar;
+5. solo entonces continuar con la siguiente capa.
 
 ## 6. Dependencias entre subsistemas
 

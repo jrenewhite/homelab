@@ -6,3 +6,16 @@ nfs_app_identities:
     groups:
       - media_rw
       - docs_rw
+
+pihole_enabled: true
+pihole_role: primary
+pihole_listen_ip: 192.168.0.161
+pihole_web_port: 8080
+pihole_stack_dir: /opt/stacks/pihole-primary
+
+router_dns_secret_file: /opt/colibri-secrets/router.env
+router_dns_helper_path: /opt/colibri/bin/router-cli.expect
+router_dns_cutover_script: /opt/colibri/bin/router-dns-cutover-with-rollback.sh
+router_dns_log_dir: /var/log/colibri
+router_dns_canary_host: 192.168.0.151
+router_dns_canary_backup_host: 192.168.0.152

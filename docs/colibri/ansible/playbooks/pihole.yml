@@ -1,0 +1,102 @@
+---
+- name: Deploy Pi-hole containers
+  hosts: management:arm
+  become: true
+  gather_facts: true
+  vars:
+    pihole_target_hosts:
+      - management
+      - orangepi5-ultra
+      - orangepi5-max
+
+  tasks:
+    - name: Guard live Pi-hole deployment
+      ansible.builtin.fail:
+        msg: "Set pihole_apply=true to deploy Pi-hole."
+      when: not (pihole_apply | bool)
+
+    - name: Skip hosts without Pi-hole role
+      ansible.builtin.meta: end_host
+      when:
+        - inventory_hostname not in pihole_target_hosts or not (pihole_enabled | default(false) | bool)
+
+    - name: Ensure Pi-hole stack directory exists
+      ansible.builtin.file:
+        path: "{{ pihole_stack_dir }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
+
+    - name: Deploy Pi-hole docker-compose stack
+      ansible.builtin.copy:
+        dest: "{{ pihole_stack_dir }}/docker-compose.yml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
+        content: |
+          services:
+            pihole:
+              container_name: pihole
+              image: pihole/pihole:latest
+              hostname: {{ inventory_hostname }}-pihole
+              ports:
+                - "{{ pihole_listen_ip }}:53:53/tcp"
+                - "{{ pihole_listen_ip }}:53:53/udp"
+                - "{{ pihole_listen_ip }}:{{ pihole_web_port }}:80/tcp"
+              environment:
+                TZ: {{ pihole_timezone }}
+                FTLCONF_webserver_api_password: {{ pihole_api_password }}
+                FTLCONF_dns_listeningMode: all
+                FTLCONF_dns_upstreams: {{ pihole_upstreams }}
+              volumes:
+                - ./etc-pihole:/etc/pihole
+                - ./etc-dnsmasq.d:/etc/dnsmasq.d
+              cap_add:
+                - NET_ADMIN
+              restart: unless-stopped
+
+    - name: Start Pi-hole
+      ansible.builtin.command:
+        cmd: docker compose up -d
+        chdir: "{{ pihole_stack_dir }}"
+
+    - name: Wait for gravity database to exist
+      ansible.builtin.wait_for:
+        path: "{{ pihole_stack_dir }}/etc-pihole/gravity.db"
+        timeout: 120
+
+    - name: Apply baseline blocklists
+      ansible.builtin.shell: |
+        python3 - <<'PY'
+        import sqlite3, time
+        path = "{{ pihole_stack_dir }}/etc-pihole/gravity.db"
+        con = sqlite3.connect(path)
+        cur = con.cursor()
+        now = int(time.time())
+        if {{ 'True' if pihole_disable_default_stevenblack else 'False' }}:
+            cur.execute(
+                "update adlist set enabled=0, date_modified=? where address=?",
+                (now, "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"),
+            )
+        items = {{ pihole_blocklists | to_json }}
+        for item in items:
+            cur.execute(
+                """
+                insert into adlist(address, enabled, comment, date_added, date_modified, type)
+                values(?,?,?,?,?,0)
+                on conflict(address, type) do update
+                set enabled=excluded.enabled,
+                    comment=excluded.comment,
+                    date_modified=excluded.date_modified
+                """,
+                (item["url"], 1, item["comment"], now, now),
+            )
+        con.commit()
+        PY
+      args:
+        executable: /bin/bash
+
+    - name: Update gravity
+      ansible.builtin.command:
+        cmd: docker exec pihole pihole -g

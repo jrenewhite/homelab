@@ -4,6 +4,10 @@ Thumbs.db
 .env
 .env.*
 *.local
+environment/*.env
+environment/*.secret
+!environment/*.example.env
+!environment/README.md
 
 .ansible/
 *.retry
