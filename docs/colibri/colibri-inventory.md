@@ -10,16 +10,16 @@ Este documento separa:
 
 ## Nodos verificados por SSH
 
-| Hostname | IP actual | MAC | SO | Arquitectura | Modelo | Notas |
+| Hostname | IP reservada objetivo | MAC | SO | Arquitectura | Modelo | Notas |
 |---|---|---|---|---|---|---|
-| `ai-gpu` | `192.168.0.40` | `58:47:CA:7F:84:B5` | `Ubuntu 26.04 LTS` | `x86_64` | `Micro Computer (HK) Tech Limited / MotherBoard Series` | Nodo GPU; IP final util ya activa, lease DHCP legacy observado en `.186` |
-| `management` | `192.168.0.10` | `C4:65:16:AC:AB:37` | `Ubuntu 26.04 LTS` | `x86_64` | `HP EliteDesk 800 G4 DM 35W (TAA)` | `EliteDesk`, `Docker` y `Ansible` instalados, `NUT` instalado y deshabilitado, `Pi-hole` primario activo en `192.168.0.10:53` y UI en `:8080`; lease DHCP legacy observado en `.172` |
-| `nas` | `192.168.0.20` | `C8:FF:BF:05:F4:46` | `Debian GNU/Linux 13 (trixie)` | `x86_64` | `WTR PRO` | `OpenMediaVault` con namespaces `media` y `docs` ya exportados por `NFS`; IP final util ya activa, lease DHCP legacy observado en `.190` |
-| `services` | `192.168.0.30` | `58:47:CA:79:08:69` | `Ubuntu 26.04 LTS` | `x86_64` | `EliteMini Series` | `UM890`, `Docker` instalado, mounts `NFS` activos para `media/docs`; IP final util ya activa, lease DHCP legacy observado en `.185` |
-| `orangepi5-ultra` | `192.168.0.51` | `C0:74:2B:FC:59:86` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Ultra` | Orange Pi 5 Ultra, `Docker` operativo, `Pi-hole` secundario activo en `192.168.0.51:53` y UI en `:8080`; lease DHCP legacy observado en `.151` |
-| `orangepi5-max` | `192.168.0.52` | `C0:74:2B:FD:71:43` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Max` | Orange Pi 5 Max, `Docker` operativo, `Pi-hole` terciario activo en `192.168.0.52:53` y UI en `:8080`; lease DHCP legacy observado en `.181` |
-| `orangepi5-a` | `192.168.0.53` | `C6:CC:84:3D:E2:67` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Worker ARM en transicion; MAC reaparecio en DHCP `.187` y requiere saneamiento de red antes de declararlo estable por `SSH` |
-| `orangepi5-b` | `192.168.0.54` | `C6:87:B3:C0:55:95` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Worker ARM en transicion; MAC reaparecio en DHCP `.193` y requiere saneamiento de red antes de declararlo estable por `SSH` |
+| `ai-gpu` | `192.168.0.13` | `58:47:CA:7F:84:B5` | `Ubuntu 26.04 LTS` | `x86_64` | `Micro Computer (HK) Tech Limited / MotherBoard Series` | Nodo GPU; lease DHCP legado observado en `.186` hasta renovar o reiniciar |
+| `management` | `192.168.0.10` | `C4:65:16:AC:AB:37` | `Ubuntu 26.04 LTS` | `x86_64` | `HP EliteDesk 800 G4 DM 35W (TAA)` | `EliteDesk`, `Docker` y `Ansible` instalados, `NUT` instalado y deshabilitado; lease DHCP legado observado en `.172` hasta renovar o reiniciar |
+| `nas` | `192.168.0.11` | `C8:FF:BF:05:F4:46` | `Debian GNU/Linux 13 (trixie)` | `x86_64` | `WTR PRO` | `OpenMediaVault` con namespaces `media` y `docs`; lease DHCP legado observado en `.190` hasta renovar o reiniciar |
+| `services` | `192.168.0.12` | `58:47:CA:79:08:69` | `Ubuntu 26.04 LTS` | `x86_64` | `EliteMini Series` | `UM890`, `Docker` instalado, mounts `NFS` activos para `media/docs`; lease DHCP legado observado en `.185` hasta renovar o reiniciar |
+| `orangepi5-ultra` | `192.168.0.14` | `C0:74:2B:FC:59:86` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Ultra` | Orange Pi 5 Ultra, `Docker` operativo; lease DHCP legado observado en `.178` hasta renovar o reiniciar |
+| `orangepi5-max` | `192.168.0.15` | `C0:74:2B:FD:71:43` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Max` | Orange Pi 5 Max, `Docker` operativo; lease DHCP legado observado en `.181` hasta renovar o reiniciar |
+| `orangepi5-a` | `192.168.0.16` | `C6:CC:84:3D:E2:67` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Worker ARM en transición; lease DHCP legado observado en `.187` |
+| `orangepi5-b` | `192.168.0.17` | `C6:87:B3:C0:55:95` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Worker ARM en transición; lease DHCP legado observado en `.193` |
 
 ## Capacidades detectadas
 
@@ -54,7 +54,7 @@ Este documento separa:
 - `expect` instalado para automatización segura del router
 - `nut-client` y `nut-server` instalados
 - `NUT` deshabilitado hasta definir UPS y configuracion
-- `Pi-hole` staged:
+- `Pi-hole` objetivo:
   - DNS en `192.168.0.10:53`
   - UI en `http://192.168.0.10:8080/admin`
   - baseline de listas: `OISD small`
@@ -94,11 +94,11 @@ Este documento separa:
 - `ACLs` y `setgid` ya aplicados en `media/docs`
 - `root_squash` mantenido en `NFS`
 
-### `orangepi5-ultra`
+### `orangepi5-ultra` - objetivo `192.168.0.14` / observado pre-renovación `192.168.0.178`
 
 - CPU: `RK3588`, `4x Cortex-A76 + 4x Cortex-A55`
 - RAM visible: `15 GiB`
-- Red activa: `Ethernet 192.168.0.51` con lease DHCP legado en `.151`
+- Red activa observada recientemente: lease DHCP legado en `.178`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
 - `119.2G NVMe ORICO` reformateado a `ext4`
@@ -111,19 +111,19 @@ Este documento separa:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
 - `colibri-cpufreq-tune.service` activo con tope `2016000` en clusters grandes
-- `Pi-hole` secundario staged:
-  - DNS en `192.168.0.51:53`
-  - UI en `http://192.168.0.51:8080/admin`
+- `Pi-hole` secundario objetivo:
+  - DNS en `192.168.0.14:53`
+  - UI en `http://192.168.0.14:8080/admin`
   - baseline de listas: `OISD small`
 - canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
 - `sudoers` acotado para ejecución sin password del canary checker
 - canary principal usado con éxito en el cutover real de DNS LAN del router
 
-### `orangepi5-max`
+### `orangepi5-max` - objetivo `192.168.0.15` / observado pre-renovación `192.168.0.181`
 
 - CPU: `RK3588`, `4x Cortex-A76 + 4x Cortex-A55`
 - RAM visible: `7.7 GiB`
-- Red activa: `Ethernet 192.168.0.52` con lease DHCP legado en `.181`
+- Red activa observada recientemente: lease DHCP legado en `.181`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
 - `119.2G NVMe ORICO` reformateado a `ext4`
@@ -136,18 +136,18 @@ Este documento separa:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
 - `colibri-cpufreq-tune.service` activo con tope `2016000` en clusters grandes
-- `Pi-hole` terciario staged:
-  - DNS en `192.168.0.52:53`
-  - UI en `http://192.168.0.52:8080/admin`
+- `Pi-hole` terciario objetivo:
+  - DNS en `192.168.0.15:53`
+  - UI en `http://192.168.0.15:8080/admin`
   - baseline de listas: `OISD small`
 - canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
 - `sudoers` acotado para ejecución sin password del canary checker
 
-### `orangepi5-a` - objetivo `192.168.0.53` / observado pre-reservas `192.168.0.153`
+### `orangepi5-a` - objetivo `192.168.0.16` / observado pre-renovación `192.168.0.187`
 
 - CPU: `RK3588S/RK3588 family`, `4x Cortex-A76 + 4x Cortex-A55`
 - RAM visible: `7.7 GiB`
-- Red activa: `Ethernet 192.168.0.153`
+- Red activa observada recientemente: lease DHCP legado en `.187`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
 - arranque actual desde `/dev/mmcblk1p1`
@@ -157,11 +157,11 @@ Este documento separa:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
 
-### `orangepi5-b` - `192.168.0.154`
+### `orangepi5-b` - objetivo `192.168.0.17` / observado pre-renovación `192.168.0.193`
 
 - CPU: `RK3588S/RK3588 family`, `4x Cortex-A76 + 4x Cortex-A55`
 - RAM visible: `7.7 GiB`
-- Red activa: `Ethernet 192.168.0.154`
+- Red activa observada recientemente: lease DHCP legado en `.193`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
 - arranque actual desde `/dev/mmcblk1p1`
@@ -173,7 +173,7 @@ Este documento separa:
 
 ### `services` - `UM890`
 
-- IP actual util: `192.168.0.30`
+- IP reservada objetivo: `192.168.0.12`
 - lease DHCP legado observado: `192.168.0.185`
 - CPU: `AMD Ryzen 9 8945HS`, `8C/16T`
 - RAM fisica declarada: `64 GiB`
@@ -201,13 +201,13 @@ Este documento separa:
 
 ## Lectura actual
 
-- Los nodos x86 ya tienen IP final util activa en `.10`, `.20`, `.30` y `.40`.
-- `192.168.0.10` es el `HP EliteDesk 800 G4`.
-- `orangepi5-ultra` y `orangepi5-max` ya tienen IP final util activa en `.51` y `.52`.
-- `orangepi5-a` y `orangepi5-b` quedaron en transicion y reaparecieron temporalmente por DHCP en `.187` y `.193`.
+- El CSV de reservas ya redefine el bloque core a `.10-.19`.
+- Muchos nodos del homelab siguen temporalmente en leases previos y no deben asumirse ya migrados.
+- `192.168.0.10` sigue reservado para `management`, pero el lease observado reciente fue `.172`.
+- `orangepi5-ultra`, `orangepi5-max`, `orangepi5-a` y `orangepi5-b` aún no deben asumirse en `.14-.17` hasta renovar lease o reiniciar.
 - El MAC `84:A9:3E:12:A6:9B` tiene dos leases en `192.168.0.162` y `192.168.0.164`, pero ninguno estaba activo en el momento del barrido.
 - `192.168.10.101` corresponde a la workstation local `bd795m`, no al `UM890 Pro`.
-- `services` en `192.168.0.30` corresponde al `UM890`.
+- el objetivo final de `services` ya no es `.30`, sino `.12`.
 - Las dos `Orange Pi 5` simples ya se renombraron a `orangepi5-a` y `orangepi5-b`.
 - Las dos `Orange Pi 5` simples no muestran su `NVMe` a nivel de kernel en este momento.
 - `services` ya monta `NFS` desde `nas` en `/srv/media` y `/srv/docs`.

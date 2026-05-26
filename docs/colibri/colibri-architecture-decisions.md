@@ -1,7 +1,7 @@
 # Colibrí Homelab — Arquitectura objetivo y decisiones
 
 > Estado documental:
-> Este documento conserva decisiones y contexto útil, pero la fuente de verdad aprobada para el diseño pasa a ser [colibri-master-plan.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-master-plan.md) y los anexos en [colibri-microplans](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans).
+> Este documento conserva decisiones y contexto útil, pero la fuente de verdad aprobada para el diseño pasa a ser [colibri-master-plan.md](./colibri-master-plan.md) y los anexos en [colibri-microplans](./colibri-microplans).
 
 Documento de arquitectura para el homelab de la casa `Colibri`.
 
@@ -50,13 +50,13 @@ Según baseline del router:
 |---|---|
 | Router | `192.168.0.1` |
 | `management` | `192.168.0.10` |
-| `nas` | `192.168.0.20` |
-| `services` | `192.168.0.30` |
-| `ai-gpu` | `192.168.0.40` |
-| `orangepi5-ultra` | `192.168.0.51` |
-| `orangepi5-max` | `192.168.0.52` |
-| `orangepi5-a` | `192.168.0.53` |
-| `orangepi5-b` | `192.168.0.54` |
+| `nas` | `192.168.0.11` |
+| `services` | `192.168.0.12` |
+| `ai-gpu` | `192.168.0.13` |
+| `orangepi5-ultra` | `192.168.0.14` |
+| `orangepi5-max` | `192.168.0.15` |
+| `orangepi5-a` | `192.168.0.16` |
+| `orangepi5-b` | `192.168.0.17` |
 
 Las IPs finales deben venir de reservas DHCP en el `TP-Link ER707-M2`; no de IPs estáticas repartidas por host.
 
@@ -203,10 +203,10 @@ Pi-hole primario:
   management / 192.168.0.10
 
 Pi-hole secundario:
-  orangepi5-ultra / 192.168.0.51
+  orangepi5-ultra / 192.168.0.14
 
 Pi-hole terciario opcional:
-  orangepi5-max / 192.168.0.52
+  orangepi5-max / 192.168.0.15
 ```
 
 ### DHCP del router

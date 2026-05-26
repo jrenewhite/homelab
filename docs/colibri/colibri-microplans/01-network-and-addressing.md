@@ -8,7 +8,8 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 
 - LAN efectiva: `192.168.0.0/24`
 - router: `192.168.0.1`
-- reservas DHCP objetivo documentadas pero no aplicadas
+- reservas DHCP ya importadas en el router
+- varios nodos clave siguen temporalmente en leases previos hasta renovar o reiniciar
 - acceso `SSH` funcional a los nodos principales
 - nombres de host actuales ya estabilizados
 - `Perú` aún no está configurado, pero el diseño ya debe tolerar operación multi-site
@@ -40,13 +41,13 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 |---|---|
 | router | `192.168.0.1` |
 | `management` | `192.168.0.10` |
-| `nas` | `192.168.0.20` |
-| `services` | `192.168.0.30` |
-| `ai-gpu` | `192.168.0.40` |
-| `orangepi5-ultra` | `192.168.0.51` |
-| `orangepi5-max` | `192.168.0.52` |
-| `orangepi5-a` | `192.168.0.53` |
-| `orangepi5-b` | `192.168.0.54` |
+| `nas` | `192.168.0.11` |
+| `services` | `192.168.0.12` |
+| `ai-gpu` | `192.168.0.13` |
+| `orangepi5-ultra` | `192.168.0.14` |
+| `orangepi5-max` | `192.168.0.15` |
+| `orangepi5-a` | `192.168.0.16` |
+| `orangepi5-b` | `192.168.0.17` |
 
 ## Flujos
 

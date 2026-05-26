@@ -6,12 +6,13 @@ Definir resolución DNS resiliente para la casa y administración segura de Pi-h
 
 ## Estado actual
 
-- `Pi-hole` ya corre en prueba sobre:
-  - `management` `192.168.0.10:53` con UI en `:8080`
-  - `orangepi5-ultra` `192.168.0.51:53` con UI en `:8080`
-  - `orangepi5-max` `192.168.0.52:53` con UI en `:8080`
+- la arquitectura staged de `Pi-hole` queda fijada en:
+  - `management` `192.168.0.10:53`
+  - `orangepi5-ultra` `192.168.0.14:53`
+  - `orangepi5-max` `192.168.0.15:53`
 - las tres instancias usan `OISD small` como baseline conservador
 - el `ER707-M2` sigue siendo la única autoridad DHCP de la red
+- tras importar reservas DHCP, varios nodos del homelab siguen temporalmente en leases previos; no se asume todavía que ya respondan en sus IP finales
 - `management` ya tiene el helper y script de rollback automático en dry-run lógico validado
 - el aprendizaje operativo más importante fue:
   - no volver a mezclar cambio de DNS del router con cambios de IP o reservas DHCP

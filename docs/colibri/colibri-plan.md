@@ -1,7 +1,7 @@
 # Colibri
 
 > Estado documental:
-> Este documento se conserva como resumen inicial de trabajo. La arquitectura aprobada y el diseño `decision complete` viven en [colibri-master-plan.md](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-master-plan.md) y [colibri-microplans](/home/jrenewhite/Projects/homelab/docs/colibri/colibri-microplans).
+> Este documento se conserva como resumen inicial de trabajo. La arquitectura aprobada y el diseño `decision complete` viven en [colibri-master-plan.md](./colibri-master-plan.md) y [colibri-microplans](./colibri-microplans).
 
 ## Resumen
 
@@ -59,19 +59,19 @@ Casa 1 sera la base del homelab. La prioridad recomendada es:
 
 ### Nodos principales actuales
 
-- `ai-gpu`: `192.168.0.103`
-- `nas`: `192.168.0.136`
-- `orangepi5-ultra`: `192.168.0.151`
-- `orangepi5-max`: `192.168.0.152`
-- `orangepi5-a`: `192.168.0.153` pre-reservas; objetivo final `192.168.0.53`
-- `orangepi5-b`: `192.168.0.154` pre-reservas; objetivo final `192.168.0.54`
-- `services`: `192.168.0.155`
-- `management`: `192.168.0.161`
+- `ai-gpu`: lease observado `192.168.0.186`; objetivo final `192.168.0.13`
+- `nas`: lease observado `192.168.0.190`; objetivo final `192.168.0.11`
+- `orangepi5-ultra`: lease observado `192.168.0.178`; objetivo final `192.168.0.14`
+- `orangepi5-max`: lease observado `192.168.0.181`; objetivo final `192.168.0.15`
+- `orangepi5-a`: lease observado `192.168.0.187`; objetivo final `192.168.0.16`
+- `orangepi5-b`: lease observado `192.168.0.193`; objetivo final `192.168.0.17`
+- `services`: lease observado `192.168.0.185`; objetivo final `192.168.0.12`
+- `management`: lease observado `192.168.0.172`; objetivo final `192.168.0.10`
 
 ### Lectura preliminar
 
 - La red base final para `Colibri` es `192.168.0.0/24`.
-- El router `ER707-M2` ya responde por `SSH`, pero la configuracion final de reservas DHCP sigue pendiente.
+- El router `ER707-M2` ya responde por `SSH` y las reservas DHCP ya fueron importadas, pero varios nodos siguen temporalmente en leases previos.
 - Los 8 nodos principales ya responden por `SSH`.
 - `nas` ya expone `/srv/media` y `/srv/docs` por `NFS`.
 - `services` ya monta ambos exports por `NFS`.
@@ -225,22 +225,23 @@ Propuesta final dentro de `192.168.0.0/24`:
 
 - `.1` router
 - `.10` `management`
-- `.20` `nas`
-- `.30` `services`
-- `.40` `ai-gpu`
-- `.51` `orangepi5-ultra`
-- `.52` `orangepi5-max`
-- `.53` `orangepi5-a`
-- `.54` `orangepi5-b`
+- `.11` `nas`
+- `.12` `services`
+- `.13` `ai-gpu`
+- `.14` `orangepi5-ultra`
+- `.15` `orangepi5-max`
+- `.16` `orangepi5-a`
+- `.17` `orangepi5-b`
 
 ## Orden de implementacion recomendado
 
-1. Aplicar reservas DHCP del router
+1. Verificar que las reservas DHCP del router estén activas
 2. Mantener DHCP en el router y usar `Pi-hole` solo como DNS
-3. Estandarizar `SSH key` y hostnames finales despues de las nuevas IPs
-4. Desplegar `Pi-hole`, `Vaultwarden`, `Paperless` y `Portainer`
-5. Integrar `Home Assistant` en `Orange Pi` si conviene por perifericos o aislamiento
-6. Activar `ai-gpu` solo bajo demanda para GPU dedicada
+3. Renovar lease o reiniciar nodos por tandas pequeñas hasta que tomen sus nuevas IPs
+4. Estandarizar `SSH key` y hostnames finales despues de las nuevas IPs
+5. Desplegar `Pi-hole`, `Vaultwarden`, `Paperless` y `Portainer`
+6. Integrar `Home Assistant` en `Orange Pi` si conviene por perifericos o aislamiento
+7. Activar `ai-gpu` solo bajo demanda para GPU dedicada
 6. Documentar credenciales, DNS, dominios, shares y restauracion
 
 ## Riesgos y decisiones pendientes

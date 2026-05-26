@@ -4,7 +4,7 @@ Documento maestro de arquitectura aprobada para la casa `Colibrí`, dentro de la
 
 Este documento es la fuente de verdad principal para diseño y decisiones del sitio `Colibrí`. Los demás documentos se usan así:
 
-- [white-enciso-multisite.md](/home/jrenewhite/Projects/homelab/docs/white-enciso-multisite.md): marco compartido multi-site
+- [white-enciso-multisite.md](../white-enciso-multisite.md): marco compartido multi-site
 - [colibri-inventory.md](./colibri-inventory.md): estado factual observado
 - [colibri-router-baseline.md](./colibri-router-baseline.md): baseline del router
 - [colibri-risk-matrix.md](./colibri-risk-matrix.md): riesgo, prechecks y rollback por microplan

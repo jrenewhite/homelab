@@ -17,5 +17,5 @@ router_dns_secret_file: /opt/colibri-secrets/router.env
 router_dns_helper_path: /opt/colibri/bin/router-cli.expect
 router_dns_cutover_script: /opt/colibri/bin/router-dns-cutover-with-rollback.sh
 router_dns_log_dir: /var/log/colibri
-router_dns_canary_host: 192.168.0.52
-router_dns_canary_backup_host: 192.168.0.51
+router_dns_canary_host: 192.168.0.14
+router_dns_canary_backup_host: 192.168.0.15
