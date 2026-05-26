@@ -1,0 +1,36 @@
+---
+- name: Configure NAS ownership and ACL policy
+  hosts: nas
+  become: true
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - nas_permissions_apply | bool
+        fail_msg: "Set nas_permissions_apply=true when ready to enforce NAS permissions."
+
+    - name: Install ACL tooling
+      ansible.builtin.package:
+        name: "{{ nas_acl_packages }}"
+        state: present
+
+    - name: Ensure permission roots have owner, group and mode
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+        state: directory
+      loop: "{{ nas_permission_roots }}"
+
+    - name: Apply ACL entries to permission roots
+      ansible.posix.acl:
+        path: "{{ item.0.path }}"
+        etype: "{{ item.1.etype }}"
+        entity: "{{ item.1.entity }}"
+        permissions: "{{ item.1.permissions }}"
+        default: "{{ item.1.default | default(false) }}"
+        state: present
+      loop: "{{ nas_permission_roots | subelements('acl') }}"
+      loop_control:
+        label: "{{ item.0.path }} -> {{ item.1 }}"

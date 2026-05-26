@@ -1,0 +1,29 @@
+---
+- name: Configure NAS exports
+  hosts: nas
+  become: true
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - nas_exports_apply | bool
+        fail_msg: "Set nas_exports_apply=true to configure NFS exports."
+
+    - name: Install NFS server packages
+      ansible.builtin.package:
+        name:
+          - nfs-kernel-server
+        state: present
+
+    - name: Configure exports
+      ansible.builtin.lineinfile:
+        path: /etc/exports
+        line: "{{ item.path }} {{ item.clients }}"
+        state: present
+      loop: "{{ nas_exports }}"
+      notify: Reload nfs exports
+
+  handlers:
+    - name: Reload nfs exports
+      ansible.builtin.command: exportfs -ra
+      changed_when: true

@@ -1,0 +1,27 @@
+---
+- name: Prepare NAS storage target layout
+  hosts: nas
+  become: true
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - nas_storage_apply | bool
+        fail_msg: "Set nas_storage_apply=true to run destructive NAS storage tasks."
+
+    - name: Show target tier layout
+      ansible.builtin.debug:
+        var: nas_tiers
+
+    - name: Ensure tier mountpoints exist
+      ansible.builtin.file:
+        path: "{{ item.value.mountpoint }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ nas_tiers | dict2items }}"
+
+    - name: Stop here for manual storage migration
+      ansible.builtin.debug:
+        msg:
+          - "This playbook declares the target storage layout."
+          - "Actual mdadm/LVM teardown and filesystem creation should be executed only after validated backup and maintenance window."

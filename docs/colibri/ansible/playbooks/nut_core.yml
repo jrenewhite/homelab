@@ -1,0 +1,15 @@
+---
+- name: Install NUT and management automation baseline
+  hosts: management
+  become: true
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - nut_apply | bool
+        fail_msg: "Set nut_apply=true when ready to automate NUT."
+
+    - name: Install management extra packages
+      ansible.builtin.package:
+        name: "{{ management_extra_packages }}"
+        state: present

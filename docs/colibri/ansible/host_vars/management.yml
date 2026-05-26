@@ -1,0 +1,8 @@
+nfs_app_identities:
+  - name: apps
+    uid: 3000
+    gid: 3000
+  - name: jrenewhite
+    groups:
+      - media_rw
+      - docs_rw

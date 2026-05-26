@@ -1,0 +1,36 @@
+---
+- name: Propagate shared users and groups
+  hosts: all
+  become: true
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - shared_identity_apply | bool
+        fail_msg: "Set shared_identity_apply=true when ready to propagate shared identities."
+
+    - name: Ensure shared groups exist
+      ansible.builtin.group:
+        name: "{{ item.name }}"
+        gid: "{{ item.gid }}"
+        state: present
+      loop: "{{ shared_groups }}"
+
+    - name: Ensure shared users exist
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        uid: "{{ item.uid | default(omit) }}"
+        group: "{{ item.group | default(omit) }}"
+        groups: "{{ item.groups | default(omit) }}"
+        append: true
+        shell: "{{ item.shell | default(omit) }}"
+        create_home: "{{ item.create_home | default(omit) }}"
+        system: "{{ item.system | default(omit) }}"
+        state: present
+      loop: "{{ shared_users }}"
+
+    - name: Show effective shared identities
+      ansible.builtin.debug:
+        msg:
+          - "Shared groups ensured: {{ shared_groups | map(attribute='name') | list }}"
+          - "Shared users ensured: {{ shared_users | map(attribute='name') | list }}"

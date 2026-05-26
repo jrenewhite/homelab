@@ -1,0 +1,9 @@
+---
+- name: Install baseline packages
+  hosts: all
+  become: true
+  tasks:
+    - name: Install common baseline packages
+      ansible.builtin.package:
+        name: "{{ base_packages_common }}"
+        state: present

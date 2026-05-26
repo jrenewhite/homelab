@@ -1,0 +1,31 @@
+---
+- name: Configure mergerfs namespaces on NAS
+  hosts: nas
+  become: true
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - nas_mergerfs_apply | bool
+        fail_msg: "Set nas_mergerfs_apply=true to configure mergerfs."
+
+    - name: Install mergerfs
+      ansible.builtin.package:
+        name: mergerfs
+        state: present
+
+    - name: Ensure unified mountpoints exist
+      ansible.builtin.file:
+        path: "{{ item.target }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ nas_mergerfs_mounts }}"
+
+    - name: Configure mergerfs mounts in fstab
+      ansible.builtin.mount:
+        path: "{{ item.target }}"
+        src: "{{ item.source }}"
+        fstype: fuse.mergerfs
+        opts: "{{ item.options }}"
+        state: mounted
+      loop: "{{ nas_mergerfs_mounts }}"

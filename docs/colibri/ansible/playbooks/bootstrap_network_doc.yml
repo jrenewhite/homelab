@@ -1,0 +1,11 @@
+---
+- name: Document desired network baseline
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Show desired LAN baseline
+      ansible.builtin.debug:
+        msg:
+          - "Router LAN: {{ router_baseline.lan_cidr }}"
+          - "DHCP pool: {{ router_baseline.dhcp_range_start }} - {{ router_baseline.dhcp_range_end }}"
+          - "Reservations must map hosts to their desired_ip values in inventory/hosts.yml"

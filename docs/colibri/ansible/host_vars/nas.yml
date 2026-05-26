@@ -1,0 +1,209 @@
+nas_storage_apply: false
+nas_mergerfs_apply: false
+nas_exports_apply: false
+
+nas_system_disk: /dev/nvme1n1
+nas_tiers:
+  media_cold:
+    device: /dev/md0
+    fstype: xfs
+    mountpoint: /srv/media-cold
+  media_warm:
+    device: /dev/nvme2n1
+    fstype: btrfs
+    mountpoint: /srv/media-warm
+  docs_cold:
+    device: /dev/md1
+    fstype: ext4
+    mountpoint: /srv/docs-cold
+  docs_warm:
+    device: /dev/nvme0n1
+    fstype: btrfs
+    mountpoint: /srv/docs-warm
+
+nas_mergerfs_mounts:
+  - name: media
+    source: "/srv/media-warm:/srv/media-cold"
+    target: /srv/media
+    options: "defaults,allow_other,use_ino,category.create=ff,minfreespace=20G,moveonenospc=true,fsname=media"
+  - name: docs
+    source: "/srv/docs-warm:/srv/docs-cold"
+    target: /srv/docs
+    options: "defaults,allow_other,use_ino,category.create=ff,minfreespace=10G,moveonenospc=true,fsname=docs"
+
+nas_exports:
+  - path: /srv/media
+    clients: "192.168.0.0/24(rw,sync,no_subtree_check,fsid=101)"
+  - path: /srv/docs
+    clients: "192.168.0.0/24(rw,sync,no_subtree_check,fsid=102)"
+
+nas_tiering_jobs:
+  media:
+    source: /srv/media-warm
+    dest: /srv/media-cold
+    systemd_timer: "03:15"
+  docs:
+    source: /srv/docs-warm
+    dest: /srv/docs-cold
+    systemd_timer: "03:45"
+
+nas_acl_packages:
+  - acl
+
+nas_permission_roots:
+  - path: /srv/media
+    owner: apps
+    group: media_rw
+    mode: "2775"
+    acl:
+      - etype: user
+        entity: apps
+        permissions: rwx
+      - etype: group
+        entity: media_rw
+        permissions: rwx
+      - etype: group
+        entity: media_ro
+        permissions: rx
+      - etype: user
+        entity: apps
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: media_rw
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: media_ro
+        permissions: rx
+        default: true
+  - path: /srv/media-warm
+    owner: apps
+    group: media_rw
+    mode: "2775"
+    acl:
+      - etype: user
+        entity: apps
+        permissions: rwx
+      - etype: group
+        entity: media_rw
+        permissions: rwx
+      - etype: group
+        entity: media_ro
+        permissions: rx
+      - etype: user
+        entity: apps
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: media_rw
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: media_ro
+        permissions: rx
+        default: true
+  - path: /srv/media-cold
+    owner: apps
+    group: media_rw
+    mode: "2775"
+    acl:
+      - etype: user
+        entity: apps
+        permissions: rwx
+      - etype: group
+        entity: media_rw
+        permissions: rwx
+      - etype: group
+        entity: media_ro
+        permissions: rx
+      - etype: user
+        entity: apps
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: media_rw
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: media_ro
+        permissions: rx
+        default: true
+  - path: /srv/docs
+    owner: apps
+    group: docs_rw
+    mode: "2775"
+    acl:
+      - etype: user
+        entity: apps
+        permissions: rwx
+      - etype: group
+        entity: docs_rw
+        permissions: rwx
+      - etype: group
+        entity: docs_ro
+        permissions: rx
+      - etype: user
+        entity: apps
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: docs_rw
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: docs_ro
+        permissions: rx
+        default: true
+  - path: /srv/docs-warm
+    owner: apps
+    group: docs_rw
+    mode: "2775"
+    acl:
+      - etype: user
+        entity: apps
+        permissions: rwx
+      - etype: group
+        entity: docs_rw
+        permissions: rwx
+      - etype: group
+        entity: docs_ro
+        permissions: rx
+      - etype: user
+        entity: apps
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: docs_rw
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: docs_ro
+        permissions: rx
+        default: true
+  - path: /srv/docs-cold
+    owner: apps
+    group: docs_rw
+    mode: "2775"
+    acl:
+      - etype: user
+        entity: apps
+        permissions: rwx
+      - etype: group
+        entity: docs_rw
+        permissions: rwx
+      - etype: group
+        entity: docs_ro
+        permissions: rx
+      - etype: user
+        entity: apps
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: docs_rw
+        permissions: rwx
+        default: true
+      - etype: group
+        entity: docs_ro
+        permissions: rx
+        default: true

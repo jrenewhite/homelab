@@ -1,0 +1,10 @@
+---
+- name: Placeholder for Tailscale bootstrap
+  hosts: all
+  become: true
+  tasks:
+    - name: Confirm whether Tailscale bootstrap is enabled
+      ansible.builtin.assert:
+        that:
+          - tailscale_apply | bool
+        fail_msg: "Set tailscale_apply=true when ready to automate Tailscale."

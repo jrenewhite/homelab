@@ -1,0 +1,37 @@
+---
+- name: Mount NAS exports on service hosts
+  hosts: services
+  become: true
+  vars:
+    nfs_mounts:
+      - path: /srv/media
+        src: "{{ hostvars['nas'].desired_ip | default(hostvars['nas'].ansible_host) }}:/srv/media"
+      - path: /srv/docs
+        src: "{{ hostvars['nas'].desired_ip | default(hostvars['nas'].ansible_host) }}:/srv/docs"
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - nfs_mounts_apply | bool
+        fail_msg: "Set nfs_mounts_apply=true to configure NFS mounts."
+
+    - name: Install NFS client
+      ansible.builtin.package:
+        name: nfs-common
+        state: present
+
+    - name: Ensure NFS mountpoints exist
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ nfs_mounts }}"
+
+    - name: Mount NFS exports
+      ansible.builtin.mount:
+        path: "{{ item.path }}"
+        src: "{{ item.src }}"
+        fstype: nfs4
+        opts: defaults,_netdev
+        state: mounted
+      loop: "{{ nfs_mounts }}"

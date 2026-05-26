@@ -1,0 +1,70 @@
+admin_user: jrenewhite
+admin_shell: /bin/bash
+admin_groups:
+  - sudo
+
+set_passwordless_sudo: false
+
+base_packages_common:
+  - curl
+  - git
+  - htop
+  - jq
+  - rsync
+  - sudo
+  - tmux
+  - vim
+
+container_runtime_packages_ubuntu:
+  - docker.io
+  - docker-compose-v2
+
+container_runtime_packages_debian:
+  - docker-cli
+  - docker.io
+  - docker-compose
+
+management_extra_packages:
+  - ansible
+  - nut-client
+  - nut-server
+
+shared_identity_apply: false
+nas_permissions_apply: false
+
+shared_groups:
+  - name: apps
+    gid: 3000
+  - name: media_rw
+    gid: 3100
+  - name: media_ro
+    gid: 3101
+  - name: docs_rw
+    gid: 3200
+  - name: docs_ro
+    gid: 3201
+
+shared_users:
+  - name: apps
+    uid: 3000
+    group: apps
+    groups:
+      - media_rw
+      - docs_rw
+    shell: /usr/sbin/nologin
+    create_home: false
+    system: true
+  - name: "{{ admin_user }}"
+    groups:
+      - media_rw
+      - docs_rw
+
+tailscale_apply: false
+containers_apply: false
+nut_apply: false
+nfs_mounts_apply: false
+
+router_baseline:
+  lan_cidr: 192.168.0.1/24
+  dhcp_range_start: 192.168.0.100
+  dhcp_range_end: 192.168.0.199
