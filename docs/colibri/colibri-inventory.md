@@ -12,14 +12,14 @@ Este documento separa:
 
 | Hostname | IP reservada objetivo | MAC | SO | Arquitectura | Modelo | Notas |
 |---|---|---|---|---|---|---|
-| `ai-gpu` | `192.168.0.13` | `58:47:CA:7F:84:B5` | `Ubuntu 26.04 LTS` | `x86_64` | `Micro Computer (HK) Tech Limited / MotherBoard Series` | Nodo GPU; lease DHCP legado observado en `.186` hasta renovar o reiniciar |
-| `management` | `192.168.0.10` | `C4:65:16:AC:AB:37` | `Ubuntu 26.04 LTS` | `x86_64` | `HP EliteDesk 800 G4 DM 35W (TAA)` | `EliteDesk`, `Docker` y `Ansible` instalados, `NUT` instalado y deshabilitado; lease DHCP legado observado en `.172` hasta renovar o reiniciar |
-| `nas` | `192.168.0.11` | `C8:FF:BF:05:F4:46` | `Debian GNU/Linux 13 (trixie)` | `x86_64` | `WTR PRO` | `OpenMediaVault` con namespaces `media` y `docs`; lease DHCP legado observado en `.190` hasta renovar o reiniciar |
-| `services` | `192.168.0.12` | `58:47:CA:79:08:69` | `Ubuntu 26.04 LTS` | `x86_64` | `EliteMini Series` | `UM890`, `Docker` instalado, mounts `NFS` activos para `media/docs`; lease DHCP legado observado en `.185` hasta renovar o reiniciar |
-| `orangepi5-ultra` | `192.168.0.14` | `C0:74:2B:FC:59:86` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Ultra` | Orange Pi 5 Ultra, `Docker` operativo; lease DHCP legado observado en `.178` hasta renovar o reiniciar |
-| `orangepi5-max` | `192.168.0.15` | `C0:74:2B:FD:71:43` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Max` | Orange Pi 5 Max, `Docker` operativo; lease DHCP legado observado en `.181` hasta renovar o reiniciar |
-| `orangepi5-a` | `192.168.0.16` | `C6:CC:84:3D:E2:67` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Worker ARM en transición; lease DHCP legado observado en `.187` |
-| `orangepi5-b` | `192.168.0.17` | `C6:87:B3:C0:55:95` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Worker ARM en transición; lease DHCP legado observado en `.193` |
+| `ai-gpu` | `192.168.0.13` | `58:47:CA:7F:84:B5` | `Ubuntu 26.04 LTS` | `x86_64` | `Micro Computer (HK) Tech Limited / MotherBoard Series` | Nodo GPU; reservation ya tomada y validada por `ping` y `SSH` |
+| `management` | `192.168.0.10` | `C4:65:16:AC:AB:37` | `Ubuntu 26.04 LTS` | `x86_64` | `HP EliteDesk 800 G4 DM 35W (TAA)` | `EliteDesk`, `Docker` y `Ansible` instalados, `NUT` instalado y deshabilitado; reservation ya tomada y validada por `ping` y `SSH` |
+| `nas` | `192.168.0.11` | `C8:FF:BF:05:F4:46` | `Debian GNU/Linux 13 (trixie)` | `x86_64` | `WTR PRO` | `OpenMediaVault` con namespaces `media` y `docs`; reservation ya tomada y validada por `ping` y `SSH` |
+| `services` | `192.168.0.12` | `58:47:CA:79:08:69` | `Ubuntu 26.04 LTS` | `x86_64` | `EliteMini Series` | `UM890`, `Docker` instalado, mounts `NFS` activos para `media/docs`; reservation ya tomada y validada por `ping` y `SSH` |
+| `orangepi5-ultra` | `192.168.0.14` | `C0:74:2B:FC:59:86` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Ultra` | Orange Pi 5 Ultra, `Docker` operativo; reservation ya tomada y validada por `ping` y `SSH` |
+| `orangepi5-max` | `192.168.0.15` | `C0:74:2B:FD:71:43` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Max` | Orange Pi 5 Max, `Docker` operativo; reservation ya tomada y validada por `ping` y `SSH` |
+| `orangepi5-a` | `192.168.0.16` | `C6:CC:84:3D:E2:67` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Worker ARM; reservation ya tomada y validada por `ping` y `SSH` |
+| `orangepi5-b` | `192.168.0.17` | `C6:87:B3:C0:55:95` | `Armbian 26.2.1 trixie` | `aarch64` | `Orange Pi 5` | Worker ARM; reservation ya tomada y validada por `ping` y `SSH` |
 
 ## Capacidades detectadas
 
@@ -94,11 +94,11 @@ Este documento separa:
 - `ACLs` y `setgid` ya aplicados en `media/docs`
 - `root_squash` mantenido en `NFS`
 
-### `orangepi5-ultra` - objetivo `192.168.0.14` / observado pre-renovación `192.168.0.178`
+### `orangepi5-ultra` - `192.168.0.14`
 
 - CPU: `RK3588`, `4x Cortex-A76 + 4x Cortex-A55`
 - RAM visible: `15 GiB`
-- Red activa observada recientemente: lease DHCP legado en `.178`
+- Red activa: `Ethernet 192.168.0.14`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
 - `119.2G NVMe ORICO` reformateado a `ext4`
@@ -119,11 +119,11 @@ Este documento separa:
 - `sudoers` acotado para ejecución sin password del canary checker
 - canary principal usado con éxito en el cutover real de DNS LAN del router
 
-### `orangepi5-max` - objetivo `192.168.0.15` / observado pre-renovación `192.168.0.181`
+### `orangepi5-max` - `192.168.0.15`
 
 - CPU: `RK3588`, `4x Cortex-A76 + 4x Cortex-A55`
 - RAM visible: `7.7 GiB`
-- Red activa observada recientemente: lease DHCP legado en `.181`
+- Red activa: `Ethernet 192.168.0.15`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
 - `119.2G NVMe ORICO` reformateado a `ext4`
@@ -143,11 +143,11 @@ Este documento separa:
 - canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
 - `sudoers` acotado para ejecución sin password del canary checker
 
-### `orangepi5-a` - objetivo `192.168.0.16` / observado pre-renovación `192.168.0.187`
+### `orangepi5-a` - `192.168.0.16`
 
 - CPU: `RK3588S/RK3588 family`, `4x Cortex-A76 + 4x Cortex-A55`
 - RAM visible: `7.7 GiB`
-- Red activa observada recientemente: lease DHCP legado en `.187`
+- Red activa: `Ethernet 192.168.0.16`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
 - arranque actual desde `/dev/mmcblk1p1`
@@ -157,11 +157,11 @@ Este documento separa:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
 
-### `orangepi5-b` - objetivo `192.168.0.17` / observado pre-renovación `192.168.0.193`
+### `orangepi5-b` - `192.168.0.17`
 
 - CPU: `RK3588S/RK3588 family`, `4x Cortex-A76 + 4x Cortex-A55`
 - RAM visible: `7.7 GiB`
-- Red activa observada recientemente: lease DHCP legado en `.193`
+- Red activa: `Ethernet 192.168.0.17`
 - Discos:
 - `57.8G` medio principal actual con raiz en `ext4`
 - arranque actual desde `/dev/mmcblk1p1`
@@ -173,8 +173,7 @@ Este documento separa:
 
 ### `services` - `UM890`
 
-- IP reservada objetivo: `192.168.0.12`
-- lease DHCP legado observado: `192.168.0.185`
+- IP activa: `192.168.0.12`
 - CPU: `AMD Ryzen 9 8945HS`, `8C/16T`
 - RAM fisica declarada: `64 GiB`
 - RAM visible al SO en este barrido: `46 GiB`
@@ -201,13 +200,11 @@ Este documento separa:
 
 ## Lectura actual
 
-- El CSV de reservas ya redefine el bloque core a `.10-.19`.
-- Muchos nodos del homelab siguen temporalmente en leases previos y no deben asumirse ya migrados.
-- `192.168.0.10` sigue reservado para `management`, pero el lease observado reciente fue `.172`.
-- `orangepi5-ultra`, `orangepi5-max`, `orangepi5-a` y `orangepi5-b` aún no deben asumirse en `.14-.17` hasta renovar lease o reiniciar.
+- El bloque core ya quedó operativo en `.10-.17`.
+- Los 8 nodos principales ya responden por `ping` y `SSH` en sus IPs reservadas nuevas.
 - El MAC `84:A9:3E:12:A6:9B` tiene dos leases en `192.168.0.162` y `192.168.0.164`, pero ninguno estaba activo en el momento del barrido.
 - `192.168.10.101` corresponde a la workstation local `bd795m`, no al `UM890 Pro`.
-- el objetivo final de `services` ya no es `.30`, sino `.12`.
+- `services` ya responde en `.12`.
 - Las dos `Orange Pi 5` simples ya se renombraron a `orangepi5-a` y `orangepi5-b`.
 - Las dos `Orange Pi 5` simples no muestran su `NVMe` a nivel de kernel en este momento.
 - `services` ya monta `NFS` desde `nas` en `/srv/media` y `/srv/docs`.
@@ -216,6 +213,32 @@ Este documento separa:
 - grupos `media_rw`, `media_ro`, `docs_rw`, `docs_ro`
 - `jrenewhite` ya pertenece a `media_rw` y `docs_rw`
 - `services` ya puede escribir en `media/docs` por `NFS` sin desactivar `root_squash`
+
+## Auditoría no-core de reservas
+
+Resumen de cierre de `Microplan 01B`:
+
+- `infra extendida`
+  - activos validados: `.18`, `.30`, `.31`
+  - configurado pendiente de observación: `.19`
+- `red y periféricos`
+  - `deco-*` `.32-.41` y `hp-officejet` `.42` quedaron validados
+- `Google Home/Nest`
+  - activos validados: `.50`, `.51`, `.53-.58`
+  - pendiente de observación: `.52`
+- `Wyze principales`
+  - activos o vistos por `ARP/MAC` razonable: `.60`, `.61`, `.62`, `.64`, `.65`
+  - pendiente de observación: `.63`, `.66`, `.67`
+- `Wyze auxiliares`
+  - activos o vistos por `ARP/MAC` razonable: `.70-.77`
+- `TP-Link / Govee`
+  - activos validados: `.80-.84`, `.86`, `.87`
+  - pendiente de observación: `.85`
+
+Lectura:
+
+- no se observaron conflictos visibles IP/MAC en el rango de reservas no-core auditado
+- los dispositivos no observados siguen considerándose cerrados por configuración mientras la reservation sea correcta
 
 ## Roles previstos
 

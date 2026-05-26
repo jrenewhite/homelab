@@ -32,7 +32,7 @@ Baseline objetivo para el `TP-Link ER707-M2` en `Standalone Mode`.
   - `pri_dns 192.168.0.10` cuando `Pi-hole` primario esté validado
   - `snd_dns 1.1.1.1` como fallback de emergencia
 - `orangepi5-ultra` permanece como `Pi-hole` secundario de arquitectura, pero no como `snd_dns` del router en la primera etapa segura
-- Las reservas DHCP ya fueron importadas; hasta renovar lease o reiniciar, varios nodos seguirán temporalmente en leases previos
+- Las reservas DHCP ya fueron importadas y los 8 nodos core ya aparecen operando en `.10-.17`
 
 ## Checklist manual en router
 

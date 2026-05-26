@@ -9,7 +9,7 @@ Cerrar el baseline de red, direccionamiento, resolución local y acceso administ
 - LAN efectiva: `192.168.0.0/24`
 - router: `192.168.0.1`
 - reservas DHCP ya importadas en el router
-- varios nodos clave siguen temporalmente en leases previos hasta renovar o reiniciar
+- los 8 nodos core ya responden en sus IPs reservadas nuevas `.10-.17`
 - acceso `SSH` funcional a los nodos principales
 - nombres de host actuales ya estabilizados
 - `Perú` aún no está configurado, pero el diseño ya debe tolerar operación multi-site
