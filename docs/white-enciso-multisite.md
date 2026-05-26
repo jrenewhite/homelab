@@ -2,6 +2,10 @@
 
 Documento marco para la plataforma multi-site de `white-enciso.com`.
 
+La política de sincronización inter-sede vive en:
+
+- [white-enciso-sync-policy.md](/home/jrenewhite/Projects/homelab/docs/white-enciso-sync-policy.md)
+
 En la fase actual:
 
 - `Colibrí` = sitio principal

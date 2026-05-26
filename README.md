@@ -7,6 +7,7 @@ Base de trabajo para organizar y desplegar el homelab de dos casas.
 Primero se diseña y estabiliza `Colibri` como referencia.
 Despues se replica la base en la segunda casa con los ajustes necesarios.
 La capa compartida multi-site vive en [white-enciso-multisite.md](./docs/white-enciso-multisite.md).
+La política de sincronización inter-sede vive en [white-enciso-sync-policy.md](./docs/white-enciso-sync-policy.md).
 
 ## Objetivos iniciales
 
@@ -20,6 +21,7 @@ La capa compartida multi-site vive en [white-enciso-multisite.md](./docs/white-e
 
 - `Colibri` documentado de forma inicial en [colibri-plan.md](./docs/colibri/colibri-plan.md)
 - marco multi-site en [white-enciso-multisite.md](./docs/white-enciso-multisite.md)
+- política de sincronización multi-site en [white-enciso-sync-policy.md](./docs/white-enciso-sync-policy.md)
 - arquitectura maestra en [colibri-master-plan.md](./docs/colibri/colibri-master-plan.md)
 - inventario operativo en [colibri-inventory.md](./docs/colibri/colibri-inventory.md)
 - baseline del router en [colibri-router-baseline.md](./docs/colibri/colibri-router-baseline.md)
