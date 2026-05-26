@@ -200,8 +200,8 @@ Este documento separa:
 | `HP EliteDesk 800 G4` | servicios 24/7 | `Ubuntu Server 26.04` |
 | `Minisforum UM890 Pro` | servicios principales | `Debian 13 / Ubuntu Server 26.04` |
 | `Orange Pi 5 Ultra` | servicios ligeros o `Home Assistant` | `Armbian Debian 13 Minimal` ya basado en `trixie` |
-| `Orange Pi 5 Max` | laboratorio ARM fuerte | `Armbian Debian 13 Minimal` ya basado en `trixie` |
-| `2 x Orange Pi 5` | DNS secundario, agentes, servicios ligeros | `Armbian Debian 13 Minimal` ya basado en `trixie` |
+| `Orange Pi 5 Max` | laboratorio ARM fuerte y `Pi-hole` terciario opcional | `Armbian Debian 13 Minimal` ya basado en `trixie` |
+| `2 x Orange Pi 5` | workers puros, monitoreo, aceleracion ligera, watchdogs | `Armbian Debian 13 Minimal` ya basado en `trixie` |
 
 ## Siguiente paso recomendado
 
