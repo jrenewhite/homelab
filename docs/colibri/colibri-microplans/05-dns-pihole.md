@@ -13,6 +13,10 @@ Definir resolución DNS resiliente para la casa y administración segura de Pi-h
 - las tres instancias usan `OISD small` como baseline conservador
 - el router aun no apunta a estos DNS; Internet sigue pasando por el router sin cambio de clientes
 - `management` ya tiene el helper y script de rollback automático en dry-run lógico validado
+- el router ya entrega:
+  - DNS primario `192.168.0.161`
+  - DNS secundario `192.168.0.151`
+- el cutover real fue validado con `orangepi5-ultra` como canary y no requirió rollback
 
 ## Objetivo final
 

@@ -63,6 +63,7 @@ Este documento separa:
   - script `router-dns-cutover-with-rollback.sh` desplegado en `/opt/colibri/bin`
   - secreto local esperado en `/opt/colibri-secrets/router.env`
   - dry-run lógico validado con `orangepi5-ultra` como canary
+  - cutover real aplicado con rollback automático armado y no requerido
 
 ### `nas` - `AOOSTAR WTR PRO`
 
@@ -116,6 +117,7 @@ Este documento separa:
   - baseline de listas: `OISD small`
 - canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
 - `sudoers` acotado para ejecución sin password del canary checker
+- canary principal usado con éxito en el cutover real de DNS LAN del router
 
 ### `orangepi5-max`
 
