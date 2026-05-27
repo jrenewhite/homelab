@@ -185,9 +185,12 @@ Este documento separa:
 - software base:
 - `Docker 29.1.3`
 - `Docker Compose 2.40.3`
-- mounts `NFS`:
+- mounts `NFS` esperados:
 - `/srv/media -> nas:/srv/media`
 - `/srv/docs -> nas:/srv/docs`
+- observación `2026-05-27`:
+- `/etc/fstab` ya fue reconciliado hacia `192.168.0.11:/srv/media` y `192.168.0.11:/srv/docs`
+- ambos mounts `NFS` vuelven a estar activos en `services`
 - rol previsto: nodo principal de servicios con `Docker` y `Portainer`
 
 ## Leases observados no confirmados
@@ -207,12 +210,13 @@ Este documento separa:
 - `services` ya responde en `.12`.
 - Las dos `Orange Pi 5` simples ya se renombraron a `orangepi5-a` y `orangepi5-b`.
 - Las dos `Orange Pi 5` simples no muestran su `NVMe` a nivel de kernel en este momento.
-- `services` ya monta `NFS` desde `nas` en `/srv/media` y `/srv/docs`.
+- `services` ya vuelve a montar `NFS` desde `nas` en `/srv/media` y `/srv/docs`.
+- `services:/etc/fstab` ya apunta a `192.168.0.11` para ambos mounts.
 - las identidades compartidas para `NFS` ya estan propagadas:
 - usuario `apps` `UID 3000`
 - grupos `media_rw`, `media_ro`, `docs_rw`, `docs_ro`
 - `jrenewhite` ya pertenece a `media_rw` y `docs_rw`
-- `services` ya puede escribir en `media/docs` por `NFS` sin desactivar `root_squash`
+- `services` ya puede volver a validarse como escritor sobre `NFS`
 
 ## Auditoría no-core de reservas
 
