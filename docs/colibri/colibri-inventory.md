@@ -229,6 +229,45 @@ Este documento separa:
   - `docs` puede quedar como `apps:docs_rw` `2775/664`
   - `media` puede quedar como `apps:media_rw` `2775/664`
 
+## Observacion energetica `04A`
+
+### UPS y `NUT`
+
+| Nodo | UPS visible en Linux | Evidencia | Estado `NUT` observado | Rol electrico propuesto |
+|---|---|---|---|---|
+| `management` | si, para una de dos UPS | `lsusb` muestra `MGE UPS Systems UPS`; `upower -d` muestra `Eaton` `ups_hiddev0` `100%` `on-battery: no` | `nut-server` y `nut-monitor` instalados pero fallando; `upsc -l` devuelve `connection refused` | unico candidato real a `NUT master`, condicionado a seguir viendo la `LinkedPro LP1KRT` |
+| `services` | no | sin UPS en `lsusb`; `upower` sin dispositivo UPS | `NUT` no instalado | `NUT client` propuesto, nunca `master` en esta fase |
+| `nas` | no | sin UPS en `lsusb`; sin UPS en `upower` | `NUT` no instalado | `NUT client` propuesto o nodo gestionado externamente |
+| `ai-gpu` | no | sin UPS en `lsusb`; `upower` sin dispositivo UPS | `NUT` no instalado | `NUT client` propuesto o nodo gestionado externamente |
+| `orangepi5-ultra` | no | sin UPS en `lsusb`; sin UPS util en `upower`; sin `NUT` instalado | `NUT` no instalado | `NUT client` propuesto o nodo auxiliar de observacion, nunca `master` en esta fase |
+
+### Topologia fisica por UPS
+
+| UPS | Instrumentacion Linux | Cargas conocidas | Notas |
+|---|---|---|---|
+| `Epcom EPU1500LCD` linea interactiva | no | `management`, `Starlink actuated v3`, `Omada ER707-M2`, `TP-Link TL-SG108`, `DS105G-M2`, ventiladores USB `~5W` | protocolo privativo; runbook manual |
+| `LinkedPro LP1KRT` online `1000VA/900W` | si, visible desde `management` | `ai-gpu`, `nas`, `services`, `orangepi5-ultra`, `orangepi5-max`, `orangepi5-a`, `orangepi5-b`, ventiladores USB `~5W` | unica UPS candidata a `NUT` en esta fase; `management` la observa por USB, pero no se alimenta de ella |
+
+### `WOL` read-only
+
+| Nodo | Interfaz principal observada | `MAC` | Soporte `WOL` | Estado actual | Politica |
+|---|---|---|---|---|---|
+| `management` | `eno1` | `C4:65:16:AC:AB:37` | no confirmado; `ethtool` no expuso lineas `Wake-on` | no confirmado | permitido solo en energia normal si mas adelante se valida; no usar en bateria |
+| `services` | `enp2s0` | `58:47:CA:79:08:69` | no confirmado; `ethtool` no expuso lineas `Wake-on` | no confirmado | permitido solo en energia normal si mas adelante se valida; no usar como pivot electrico |
+| `nas` | `eno1` | `C8:FF:BF:05:F4:46` | si | `Wake-on: g` en `eno1` y `enp3s0` | capacidad tecnica presente; prohibido despertar en bateria |
+| `ai-gpu` | `enp4s0` | `58:47:CA:7F:84:B5` | no confirmado; `ethtool` no expuso lineas `Wake-on` | no confirmado | prohibido despertar en bateria aunque luego soporte `WOL` |
+| `orangepi5-ultra` | `enP3p49s0` | `C0:74:2B:FC:59:86` | no confirmado; `ethtool` no expuso lineas `Wake-on` | no confirmado | permitido solo en energia normal si mas adelante se valida; no usar para wake en bateria |
+
+### Lectura `04A`
+
+- `management` contradice la doc vieja: si ve una UPS compatible en Linux y por eso es el unico `master` candidato real hoy.
+- `management` se alimenta de la `Epcom EPU1500LCD`, pero observa por USB la `LinkedPro LP1KRT`; esta ultima es la unica visible para Linux/NUT.
+- `services` contradice la doc vieja: no ve UPS local y no debe ser `NUT master`.
+- `nas` no debe despertarse en bateria aunque su `WOL` este habilitado hoy.
+- `ai-gpu` recupero `SSH` en esta ventana, pero no mostro UPS local ni `WOL` confirmable.
+- `orangepi5-ultra` si respondio por `SSH` al cierre de la ventana, pero no mostro UPS local ni `WOL` confirmable.
+- la topologia fisica ya esta identificada, pero `Microplan 04B` sigue bloqueado hasta decidir como conviviran la `LinkedPro` instrumentada y la `Epcom` no instrumentada dentro del runbook y de la futura config `NUT`.
+
 ## Auditoría no-core de reservas
 
 Resumen de cierre de `Microplan 01B`:
