@@ -40,6 +40,7 @@ Cerrar primero la verdad factual de energia, UPS, `WOL` y topologia electrica de
 - `orangepi5-ultra` no puede recibir rol activo mas alla de cliente/auxiliar mientras siga sin UPS local visible
 - `Microplan 04A` termina con inventario, runbook y brechas; no con configuracion
 - no se usaran canaries activos ni heartbeats entre nodos para inferir el estado de `LinkedPro`
+- `Microplan 04A.1` cierra solo inventario `WOL` y readiness de tooling; no incluye pruebas reales de wake
 
 ## Interfaces
 
@@ -88,6 +89,18 @@ Por nodo se debe registrar:
   - no confirmado por falta de acceso
 - accion permitida en energia normal
 - accion prohibida en bateria
+
+### Resultado `04A.1`
+
+- los 8 nodos principales quedaron con `WOL` expuesto por `ethtool` y habilitado en runtime con `Wake-on: g`
+- `management`, `services`, `nas` y `ai-gpu` quedan como nodos con soporte `WOL` confirmado
+- `orangepi5-ultra`, `orangepi5-max`, `orangepi5-a` y `orangepi5-b` tambien exponen soporte `WOL`, aunque su politica de uso sigue siendo conservadora
+- el cambio aplicado en esta fase es solo runtime; la persistencia despues de reboot o power cycle sigue pendiente de verificacion explicita
+- `wakeonlan` queda instalado solo en `management` como tooling futuro minimo
+- cualquier fase posterior de prueba real debe:
+  - ocurrir en energia normal
+  - excluir `nas` y `ai-gpu` cuando el sistema este en bateria
+  - decidir primero la persistencia del OS para no depender solo del estado runtime actual
 
 ## Flujos
 
@@ -141,6 +154,7 @@ Por nodo se debe registrar:
 - existe la topologia fisica por UPS, incluyendo una UPS instrumentada y una no instrumentada
 - queda claro que `management` observa la `LinkedPro` pero se alimenta de la `Epcom`
 - existe una matriz `WOL` read-only por nodo critico
+- existe una matriz `WOL` completa para los 8 nodos principales
 - `management` queda clasificado correctamente como unico `NUT master` candidato observado
 - `services` queda explicitamente fuera del rol `master`
 - `nas` y `ai-gpu` quedan explicitamente marcados como no-despertables en bateria

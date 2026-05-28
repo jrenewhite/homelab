@@ -250,13 +250,29 @@ Este documento separa:
 
 ### `WOL` read-only
 
-| Nodo | Interfaz principal observada | `MAC` | Soporte `WOL` | Estado actual | Politica |
-|---|---|---|---|---|---|
-| `management` | `eno1` | `C4:65:16:AC:AB:37` | no confirmado; `ethtool` no expuso lineas `Wake-on` | no confirmado | permitido solo en energia normal si mas adelante se valida; no usar en bateria |
-| `services` | `enp2s0` | `58:47:CA:79:08:69` | no confirmado; `ethtool` no expuso lineas `Wake-on` | no confirmado | permitido solo en energia normal si mas adelante se valida; no usar como pivot electrico |
-| `nas` | `eno1` | `C8:FF:BF:05:F4:46` | si | `Wake-on: g` en `eno1` y `enp3s0` | capacidad tecnica presente; prohibido despertar en bateria |
-| `ai-gpu` | `enp4s0` | `58:47:CA:7F:84:B5` | no confirmado; `ethtool` no expuso lineas `Wake-on` | no confirmado | prohibido despertar en bateria aunque luego soporte `WOL` |
-| `orangepi5-ultra` | `enP3p49s0` | `C0:74:2B:FC:59:86` | no confirmado; `ethtool` no expuso lineas `Wake-on` | no confirmado | permitido solo en energia normal si mas adelante se valida; no usar para wake en bateria |
+| Nodo | Interfaz principal | `MAC` | Driver | `Supports Wake-on` | `Wake-on` actual | Estado | Accion futura | Politica |
+|---|---|---|---|---|---|---|---|---|
+| `management` | `eno1` | `C4:65:16:AC:AB:37` | `e1000e` | `pumbg` | `g` | `confirmed` | `needs OS persistence plan` | deseable para recuperacion; no usar para inferir estado de UPS |
+| `services` | `enp2s0` | `58:47:CA:79:08:69` | `r8169` | `pumbg` | `g` | `confirmed` | `needs OS persistence plan` | deseable para recuperacion; no usar para inferir estado de UPS |
+| `nas` | `eno1` | `C8:FF:BF:05:F4:46` | `igc` | `pumbg` | `g` | `confirmed` | `none` | permitido solo en energia normal; prohibido en bateria |
+| `ai-gpu` | `enp4s0` | `58:47:CA:7F:84:B5` | `r8169` | `pumbg` | `g` | `confirmed` | `needs OS persistence plan` | permitido solo en energia normal; prohibido en bateria |
+| `orangepi5-ultra` | `enP3p49s0` | `C0:74:2B:FC:59:86` | `r8169` | `pumbg` | `g` | `confirmed` | `needs OS persistence plan` | tratar como `always-on` hasta definir si realmente se aprovechara el wake |
+| `orangepi5-max` | `enP3p49s0` | `C0:74:2B:FD:71:43` | `r8169` | `pumbg` | `g` | `confirmed` | `needs OS persistence plan` | tratar como `always-on` hasta definir si realmente se aprovechara el wake |
+| `orangepi5-a` | `end1` | `C6:CC:84:3D:E2:67` | `st_gmac` | `ug` | `g` | `confirmed` | `needs OS persistence plan` | tratar como `always-on` hasta definir si realmente se aprovechara el wake |
+| `orangepi5-b` | `end1` | `C6:87:B3:C0:55:95` | `st_gmac` | `ug` | `g` | `confirmed` | `needs OS persistence plan` | tratar como `always-on` hasta definir si realmente se aprovechara el wake |
+
+### Tooling `04A.1`
+
+| Nodo | `ethtool` | wake tool | Lectura |
+|---|---|---|---|
+| `management` | presente | `wakeonlan` instalado | nodo de control futuro para pruebas de wake |
+| `services` | presente | ausente | no bloquea esta fase |
+| `nas` | presente | ausente | no bloquea esta fase |
+| `ai-gpu` | presente | ausente | no bloquea esta fase |
+| `orangepi5-ultra` | presente en `/usr/sbin/ethtool` | ausente | suficiente para inventario |
+| `orangepi5-max` | presente en `/usr/sbin/ethtool` | ausente | suficiente para inventario |
+| `orangepi5-a` | presente en `/usr/sbin/ethtool` | ausente | suficiente para inventario |
+| `orangepi5-b` | presente en `/usr/sbin/ethtool` | ausente | suficiente para inventario |
 
 ### Lectura `04A`
 
@@ -264,9 +280,20 @@ Este documento separa:
 - `management` se alimenta de la `Epcom EPU1500LCD`, pero observa por USB la `LinkedPro LP1KRT`; esta ultima es la unica visible para Linux/NUT.
 - `services` contradice la doc vieja: no ve UPS local y no debe ser `NUT master`.
 - `nas` no debe despertarse en bateria aunque su `WOL` este habilitado hoy.
-- `ai-gpu` recupero `SSH` en esta ventana, pero no mostro UPS local ni `WOL` confirmable.
-- `orangepi5-ultra` si respondio por `SSH` al cierre de la ventana, pero no mostro UPS local ni `WOL` confirmable.
+- `ai-gpu` recupero `SSH` en esta ventana y quedo con `WOL` habilitado, pero no mostro UPS local.
+- `orangepi5-ultra` si respondio por `SSH` al cierre de la ventana y tambien quedo con `WOL` habilitado.
 - la topologia fisica ya esta identificada, pero `Microplan 04B` sigue bloqueado hasta decidir como conviviran la `LinkedPro` instrumentada y la `Epcom` no instrumentada dentro del runbook y de la futura config `NUT`.
+- `04A.1` ya no queda solo como inventario: en todos los nodos principales `ethtool` expuso `Supports Wake-on` y el estado actual quedo en `Wake-on: g`.
+- el siguiente trabajo ya no es descubrir soporte, sino decidir persistencia y politica real de uso por nodo.
+- no se recomienda usar canaries activos o heartbeats energeticos: `NUT` ya entrega la senal correcta de la `LinkedPro` y los heartbeats solo agregarian gasto y ambiguedad.
+
+## Recomendacion `04A.1`
+
+- prueba real futura de `WOL`: `no-go` para fase amplia
+- motivo:
+  - aunque todos quedaron `confirmed` en runtime, todavia falta definir persistencia y politicas de uso
+  - `nas` y `ai-gpu` siguen prohibidos para wake en bateria
+  - antes de una fase amplia conviene hacer una prueba controlada por tandas y con gating de energia
 
 ## Auditoría no-core de reservas
 
