@@ -14,7 +14,7 @@ Este documento separa:
 |---|---|---|---|---|---|---|
 | `ai-gpu` | `192.168.0.13` | `58:47:CA:7F:84:B5` | `Ubuntu 26.04 LTS` | `x86_64` | `Micro Computer (HK) Tech Limited / MotherBoard Series` | Nodo GPU; reservation ya tomada y validada por `ping` y `SSH` |
 | `management` | `192.168.0.10` | `C4:65:16:AC:AB:37` | `Ubuntu 26.04 LTS` | `x86_64` | `HP EliteDesk 800 G4 DM 35W (TAA)` | `EliteDesk`, `Docker` y `Ansible` instalados, `NUT` instalado y deshabilitado; reservation ya tomada y validada por `ping` y `SSH` |
-| `nas` | `192.168.0.11` | `C8:FF:BF:05:F4:46` | `Debian GNU/Linux 13 (trixie)` | `x86_64` | `WTR PRO` | `OpenMediaVault` con namespaces `media` y `docs`; reservation ya tomada y validada por `ping` y `SSH` |
+| `nas` | `192.168.0.11` | `C8:FF:BF:05:F4:47` | `Debian GNU/Linux 13 (trixie)` | `x86_64` | `WTR PRO` | `OpenMediaVault` con namespaces `media` y `docs`; NIC operativo actual `enp3s0`; reservation ya tomada y validada por `ping` y `SSH` |
 | `services` | `192.168.0.12` | `58:47:CA:79:08:69` | `Ubuntu 26.04 LTS` | `x86_64` | `EliteMini Series` | `UM890`, `Docker` instalado, mounts `NFS` activos para `media/docs`; reservation ya tomada y validada por `ping` y `SSH` |
 | `orangepi5-ultra` | `192.168.0.14` | `C0:74:2B:FC:59:86` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Ultra` | Orange Pi 5 Ultra, `Docker` operativo; reservation ya tomada y validada por `ping` y `SSH` |
 | `orangepi5-max` | `192.168.0.15` | `C0:74:2B:FD:71:43` | `Armbian_community 26.2.0-trunk.904 trixie` | `aarch64` | `RK3588 OPi 5 Max` | Orange Pi 5 Max, `Docker` operativo; reservation ya tomada y validada por `ping` y `SSH` |
@@ -38,6 +38,21 @@ Este documento separa:
 - software base:
 - `Docker` no instalado actualmente
 - `NVIDIA GeForce RTX 5060` visible por `nvidia-smi`
+- energia/WOL:
+- interfaz principal `enp4s0`
+- `MAC` `58:47:CA:7F:84:B5`
+- driver `r8169`
+- `Supports Wake-on: pumbg`
+- `Wake-on: g`
+- prueba real `WOL` en `2026-05-28` validada:
+  - `suspend -> magic packet -> resume`
+  - `poweroff -> magic packet -> boot`
+- health minimo validado con:
+  - `SSH`
+  - `nut-monitor`
+  - `/storage`
+  - GPU NVIDIA visible por `lspci`
+  - modulos `nvidia*` cargados
 
 ### `management` - `HP EliteDesk 800 G4`
 
@@ -54,6 +69,17 @@ Este documento separa:
 - `expect` instalado para automatización segura del router
 - `nut-client` y `nut-server` instalados
 - `NUT` deshabilitado hasta definir UPS y configuracion
+- energia/WOL:
+- interfaz principal `eno1`
+- `MAC` `C4:65:16:AC:AB:37`
+- driver `e1000e`
+- `Supports Wake-on: pumbg`
+- `Wake-on: g`
+- prueba real `WOL` en `2026-05-28` validada:
+  - `suspend -> magic packet -> resume`
+  - `poweroff -> magic packet -> boot`
+- emisor validado para wake real:
+  - `orangepi5-ultra`
 - `Pi-hole` objetivo:
   - DNS en `192.168.0.10:53`
   - UI en `http://192.168.0.10:8080/admin`
@@ -93,6 +119,22 @@ Este documento separa:
 - grupos compartidos `media_rw`, `media_ro`, `docs_rw`, `docs_ro`
 - `ACLs` y `setgid` ya aplicados en `media/docs`
 - `root_squash` mantenido en `NFS`
+- energia/WOL:
+- interfaz principal `enp3s0`
+- `MAC` `C8:FF:BF:05:F4:47`
+- driver `igc`
+- `Supports Wake-on: pumbg`
+- `Wake-on: g`
+- pruebas reales `WOL` en `2026-05-28`:
+  - primer intento `suspend -> magic packet -> resume`: fallo
+  - reintento `suspend -> magic packet -> resume`: exitoso
+  - `poweroff -> magic packet -> boot` con `eno1`: exitoso
+  - `poweroff -> magic packet -> boot` con `enp3s0` en prueba inicial: fallo
+  - `poweroff -> magic packet -> boot` con `enp3s0` en prueba estricta y espera extra: exitoso
+- caveat:
+  - `nas` muestra variabilidad en `suspend/WOL`
+  - `WOL` parece depender del NIC usado
+  - `enp3s0` funciona para `suspend` y `poweroff`, pero responde mejor si se espera unos segundos extra antes del magic packet
 
 ### `orangepi5-ultra` - `192.168.0.14`
 
@@ -170,6 +212,14 @@ Este documento separa:
 - software base:
 - `Docker 26.1.5`
 - `Docker Compose 2.26.1`
+- energia/WOL:
+- interfaz principal `end1`
+- `MAC` `C6:87:B3:C0:55:95`
+- `Supports Wake-on: ug`
+- `Wake-on: g`
+- `suspend` esta deshabilitado por `/etc/systemd/sleep.conf.d/00-disable.conf`, lo cual ahora se considera esperado bajo politica `poweroff-only` para `SBC ARM`
+- prueba real `poweroff -> magic packet -> boot` ejecutada en `2026-05-28`
+- resultado: `WOL-from-poweroff-failed-manual-recovery`
 
 ### `services` - `UM890`
 
@@ -197,6 +247,15 @@ Este documento separa:
 - observación `2026-05-27`:
 - `/etc/fstab` ya fue reconciliado hacia `192.168.0.11:/srv/media` y `192.168.0.11:/srv/docs`
 - ambos mounts `NFS` vuelven a estar activos en `services`
+- energia/WOL:
+- interfaz principal `enp2s0`
+- `MAC` `58:47:CA:79:08:69`
+- driver `r8169`
+- `Supports Wake-on: pumbg`
+- `Wake-on: g`
+- prueba real `WOL` en `2026-05-28` validada:
+  - `suspend -> magic packet -> resume`
+  - `poweroff -> magic packet -> boot`
 - brecha detectada en `Microplan 03`:
 - un `rsync` naive desde `/storage/sync-out` hacia `/srv/docs` preserva `apps:apps` en el destino final y no normaliza automáticamente a `docs_rw`
 - rol previsto: nodo principal de servicios con `Docker` y `Portainer`
@@ -229,23 +288,50 @@ Este documento separa:
   - `docs` puede quedar como `apps:docs_rw` `2775/664`
   - `media` puede quedar como `apps:media_rw` `2775/664`
 
+## Matriz final WOL
+
+| Nodo | Arq | Interfaz | MAC | `suspend -> WOL` | `poweroff -> WOL` | Emisor validado | Tiempo a ping | Tiempo a SSH | Estado operativo mínimo | Caveats | Clasificación final |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `orangepi5-ultra` | `aarch64` | `enP3p49s0` | `C0:74:2B:FC:59:86` | no probado | no probado | n/a | n/a | n/a | n/a | `wakeonlan` instalado; usar como emisor, no como target | `wake-emitter-supported` |
+| `orangepi5-max` | `aarch64` | `enP3p49s0` | `C0:74:2B:FD:71:43` | no probado | no probado | n/a | n/a | n/a | n/a | SBC ARM | `always-on/manual-recovery/no-WOL-automation` |
+| `orangepi5-a` | `aarch64` | `end1` | `C6:CC:84:3D:E2:67` | no probado | no probado | n/a | n/a | n/a | n/a | SBC ARM | `always-on/manual-recovery/no-WOL-automation` |
+| `orangepi5-b` | `aarch64` | `end1` | `C6:87:B3:C0:55:95` | no aplica | fallo | `management` | none | none | none | requirió recuperación manual; no usar como target confiable | `always-on/manual-recovery/no-WOL-automation` |
+| `services` | `x86_64` | `enp2s0` | `58:47:CA:79:08:69` | pass | pass | `management` | `10s` / `16s` | `11s` / `159s` | `SSH + nut-monitor` | `systemd-networkd-wait-online` retrasa readiness de `SSH` tras cold boot | `WOL-supported with boot-readiness caveat` |
+| `ai-gpu` | `x86_64` | `enp4s0` | `58:47:CA:7F:84:B5` | pass | pass | `management` | `11s` / `20s` | `11s` / `21s` | `SSH + nut-monitor + /storage + GPU visible por driver` | `nvidia-smi` ausente; health mínimo por driver/PCI | `WOL-supported` |
+| `nas` | `x86_64` | `enp3s0` preferido | `C8:FF:BF:05:F4:47` | pass con retry | pass con delay | `management` | `37s` / `33s` | `37s` / `33s` | `SSH + nut-monitor + md + mergerfs + NFS exports` | depende del NIC; `enp3s0` preferido; esperar unos segundos antes del packet en `poweroff` | `WOL-supported with NIC/timing caveat` |
+| `management` | `x86_64` | `eno1` | `C4:65:16:AC:AB:37` | pass | pass con delay | `orangepi5-ultra` | `13s` / `23s` | `14s` / `24s` | `SSH + nut-server/nut-monitor + upsc + ntfy-local reachability` | control plane; mejor emisor futuro desde `SBC` | `WOL-supported/control-plane-recoverable` |
+
+## Política final WOL
+
+- No usar `WOL` mientras el sistema esté en batería.
+- Prohibido despertar `nas` y `ai-gpu` en batería.
+- `WOL` automático sigue prohibido por ahora.
+- `WOL` manual solo está permitido si `NUT` reporta `OL`.
+- Todo wake futuro debe validar por capas:
+  - `ping`
+  - `SSH`
+  - `hostname`
+  - servicios base
+  - health específico de app o rol
+- Las `SBC ARM` deben permanecer encendidas mientras el `UPS` lo permita; si se apagan, la recuperación es manual.
+
 ## Observacion energetica `04A`
 
 ### UPS y `NUT`
 
 | Nodo | UPS visible en Linux | Evidencia | Estado `NUT` observado | Rol electrico propuesto |
 |---|---|---|---|---|
-| `management` | si, para una de dos UPS | `lsusb` muestra `MGE UPS Systems UPS`; `upower -d` muestra `Eaton` `ups_hiddev0` `100%` `on-battery: no` | `nut-server` y `nut-monitor` instalados pero fallando; `upsc -l` devuelve `connection refused` | unico candidato real a `NUT master`, condicionado a seguir viendo la `LinkedPro LP1KRT` |
-| `services` | no | sin UPS en `lsusb`; `upower` sin dispositivo UPS | `NUT` no instalado | `NUT client` propuesto, nunca `master` en esta fase |
-| `nas` | no | sin UPS en `lsusb`; sin UPS en `upower` | `NUT` no instalado | `NUT client` propuesto o nodo gestionado externamente |
-| `ai-gpu` | no | sin UPS en `lsusb`; `upower` sin dispositivo UPS | `NUT` no instalado | `NUT client` propuesto o nodo gestionado externamente |
-| `orangepi5-ultra` | no | sin UPS en `lsusb`; sin UPS util en `upower`; sin `NUT` instalado | `NUT` no instalado | `NUT client` propuesto o nodo auxiliar de observacion, nunca `master` en esta fase |
+| `management` | si, para una de dos UPS | `lsusb` muestra `MGE UPS Systems UPS`; `upower -d` muestra `Eaton` `ups_hiddev0` `100%` `on-battery: no`; `upsc linkedpro@localhost` devuelve variables utiles | `nut-server` y `nut-monitor` habilitados y activos; `upsc -l` devuelve `linkedpro` | unico candidato real a `NUT master`, ya operativo en modo observacion local para `LinkedPro LP1KRT` |
+| `services` | no | sin UPS en `lsusb`; `upower` sin dispositivo UPS | `nut-client` instalado; `nut-monitor` habilitado y activo; `upsc linkedpro@192.168.0.10` devuelve variables utiles | `NUT client` remoto en observacion, nunca `master` en esta fase |
+| `nas` | no | sin UPS en `lsusb`; sin UPS en `upower` | `nut-client` instalado; `nut-monitor` habilitado y activo; `upsc linkedpro@192.168.0.10` devuelve variables utiles | `NUT client` remoto en observacion |
+| `ai-gpu` | no | sin UPS en `lsusb`; `upower` sin dispositivo UPS | `nut-client` instalado; `nut-monitor` habilitado y activo; `upsc linkedpro@192.168.0.10` devuelve variables utiles | `NUT client` remoto en observacion |
+| `orangepi5-ultra` | no | sin UPS en `lsusb`; sin UPS util en `upower` | `nut-client` instalado; `nut-monitor` habilitado y activo; `upsc linkedpro@192.168.0.10` devuelve variables utiles | `NUT client` remoto en observacion, nunca `master` en esta fase |
 
 ### Topologia fisica por UPS
 
 | UPS | Instrumentacion Linux | Cargas conocidas | Notas |
 |---|---|---|---|
-| `Epcom EPU1500LCD` linea interactiva | no | `management`, `Starlink actuated v3`, `Omada ER707-M2`, `TP-Link TL-SG108`, `DS105G-M2`, ventiladores USB `~5W` | protocolo privativo; runbook manual |
+| `Epcom EPU1500LCD` linea interactiva | parcial, solo HID generico `0001:0000` | `management`, `Starlink actuated v3`, `Omada ER707-M2`, `TP-Link TL-SG108`, `DS105G-M2`, ventiladores USB `~5W` | visible por USB pero no monitorizable con `NUT` en esta fase; runbook manual |
 | `LinkedPro LP1KRT` online `1000VA/900W` | si, visible desde `management` | `ai-gpu`, `nas`, `services`, `orangepi5-ultra`, `orangepi5-max`, `orangepi5-a`, `orangepi5-b`, ventiladores USB `~5W` | unica UPS candidata a `NUT` en esta fase; `management` la observa por USB, pero no se alimenta de ella |
 
 ### `WOL` read-only
@@ -278,11 +364,25 @@ Este documento separa:
 
 - `management` contradice la doc vieja: si ve una UPS compatible en Linux y por eso es el unico `master` candidato real hoy.
 - `management` se alimenta de la `Epcom EPU1500LCD`, pero observa por USB la `LinkedPro LP1KRT`; esta ultima es la unica visible para Linux/NUT.
+- `04A.2` refinó el caso `Epcom`: si aparece por USB como `0001:0000` y hasta como `MEC0003` durante probing, pero no entrega variables utiles a `NUT`.
+- `04B` ya deja `NUT` funcional en `management` para `linkedpro@localhost`, con `ups.status=OL`, `battery.charge=100`, `battery.runtime=6060`, `input.voltage=116.3` y `output.voltage=119.8`.
+- `04C` ya deja `services`, `nas`, `ai-gpu` y `orangepi5-ultra` consultando `linkedpro@192.168.0.10` en modo observacion.
+- `04D` ya deja una politica uniforme de eventos `NUT` con `NOTIFYCMD` local a `logger`, sin acciones destructivas.
+- `04E` ya valida la salida `nut-event` en journal/syslog con eventos sinteticos `ONBATT`, `LOWBATT`, `COMMOK` y `ONLINE`.
+- `04F` ya deja una ruta de notificacion externa `best-effort` por `curl` + `ntfy`, condicionada a secretos locales fuera de git.
+- `04F.1` ya deja `ntfy` corriendo en `orangepi5-ultra` en `http://192.168.0.14:8080`, con topic no trivial distribuido via `/opt/colibri-secrets/ntfy.env`.
 - `services` contradice la doc vieja: no ve UPS local y no debe ser `NUT master`.
 - `nas` no debe despertarse en bateria aunque su `WOL` este habilitado hoy.
 - `ai-gpu` recupero `SSH` en esta ventana y quedo con `WOL` habilitado, pero no mostro UPS local.
 - `orangepi5-ultra` si respondio por `SSH` al cierre de la ventana y tambien quedo con `WOL` habilitado.
 - la topologia fisica ya esta identificada, pero `Microplan 04B` sigue bloqueado hasta decidir como conviviran la `LinkedPro` instrumentada y la `Epcom` no instrumentada dentro del runbook y de la futura config `NUT`.
+- `04A.2` ya cierra una duda importante: no vale la pena rediseñar `04B` esperando telemetria Linux real de la `Epcom`.
+- `04B` ya no esta bloqueado para observacion local; el siguiente paso posible es `04C` con clientes `NUT` remotos todavia sin shutdown automatico.
+- `04C` ya no depende de abrir exposicion global: `upsd` escucha en `127.0.0.1`, `::1` y `192.168.0.10:3493`.
+- `04D` ya no depende de eventos reales para validar la politica: `upsmon` cargo mensajes y flags no destructivos en todos los nodos observadores.
+- `04E` ya no deja duda sobre la cadena de notificacion: `upsmon`, `NOTIFYCMD` y `logger` funcionan sin apagar ni despertar nada.
+- `04F` no encontro `ntfy.env`, asi que la integracion externa queda preparada pero sin entrega real todavia.
+- `04F.1` ya desbloquea entrega local real de alertas sin exponer `ntfy` a Internet.
 - `04A.1` ya no queda solo como inventario: en todos los nodos principales `ethtool` expuso `Supports Wake-on` y el estado actual quedo en `Wake-on: g`.
 - el siguiente trabajo ya no es descubrir soporte, sino decidir persistencia y politica real de uso por nodo.
 - no se recomienda usar canaries activos o heartbeats energeticos: `NUT` ya entrega la senal correcta de la `LinkedPro` y los heartbeats solo agregarian gasto y ambiguedad.

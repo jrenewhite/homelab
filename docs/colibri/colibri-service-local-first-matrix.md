@@ -47,7 +47,7 @@ sudo -u apps rsync -avh --chown=apps:media_rw --chmod=D2775,F664 SRC/ /srv/media
 | WireGuard site-to-site | `management` o gateway dedicado | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | microplan WireGuard futuro | backbone privado inter-sede |
 | colibri-sentinel-bot | `management` + `orangepi5-ultra` | `ready` | `needs-service-plan` | local al nodo | `/storage/cache` si vive en `services` | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | `10-sentinel-bot`, `14-observability-alerting` | requiere implementación previa y plan de observabilidad |
 | Uptime Kuma | `management` | `ready` | `simple-deploy` | volumen local del nodo | none | `nas:/srv/docs/backups` | `sí` | `backup` | `optional` | none | buen candidato admin-first |
-| ntfy | `orangepi5-ultra` o `management` | `ready` | `simple-deploy` | volumen local del nodo | none | `nas:/srv/docs/backups` | `sí` | `backup` | `optional` | none | mejor alineado a canal alterno resiliente |
+| ntfy | `orangepi5-ultra` o `management` | `ready` | `simple-deploy` | volumen local del nodo | none | `nas:/srv/docs/backups` | `sí` | `backup` | `optional` | none | despliegue inicial puede ser directo, pero el estado objetivo es `Docker Compose` versionado con secretos fuera de git |
 | Diun | `management` | `ready` | `simple-deploy` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `none` | none | casi stateless |
 | Restic/Kopia | `services` | `ready` | `simple-deploy` | `/storage/apps/restic-kopia` | `/storage/sync-out` | `nas:/srv/docs/backups` | `parcial` | `backup` | `optional` | none | puede operar local, target final por ventana |
 | Homepage | `management` | `ready` | `simple-deploy` | volumen local del nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `optional` | none | herramienta admin, mejor en `management` |
@@ -59,8 +59,8 @@ sudo -u apps rsync -avh --chown=apps:media_rw --chmod=D2775,F664 SRC/ /srv/media
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | authentik | `services` | `ready` | `needs-service-plan` | `/storage/apps/authentik` | `/storage/cache` | `nas:/srv/docs/backups` | `sí` | `backup` | `optional` | `09-identity-and-sso` | storage listo, operación bloqueada por SSO/seguridad |
 | Vaultwarden | `services` | `ready` | `needs-service-plan` | `/storage/apps/vaultwarden` | none | `nas:/srv/docs/backups` | `sí` | `backup` | `optional` | `09-identity-and-sso` | single-writer, datos sensibles |
-| Portainer | `management` o `services` | `ready` | `simple-deploy` | `/storage/apps/portainer` si vive en `services`, o volumen local en `management` | none | opcional `nas:/srv/docs/backups` | `sí` | `config-export` | `optional` | none | privado/Tailscale solamente |
-| Dockge | `management` o `services` | `ready` | `simple-deploy` | `/storage/apps/dockge` si vive en `services`, o volumen local en `management` | none | opcional `nas:/srv/docs/backups` | `sí` | `config-export` | `optional` | none | privado/Tailscale solamente |
+| Portainer | `management` o `services` | `ready` | `simple-deploy` | `/storage/apps/portainer` si vive en `services`, o volumen local en `management` | none | opcional `nas:/srv/docs/backups` | `sí` | `config-export` | `optional` | none | privado/Tailscale solamente; herramienta de operacion, no fuente primaria de configuracion |
+| Dockge | `management` o `services` | `ready` | `simple-deploy` | `/storage/apps/dockge` si vive en `services`, o volumen local en `management` | none | opcional `nas:/srv/docs/backups` | `sí` | `config-export` | `optional` | none | privado/Tailscale solamente; herramienta de operacion, no fuente primaria de configuracion |
 | CrowdSec | `defer` | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs/backups` | `sí` | `backup` | `optional` | `06-reverse-proxy-cloudflared` o seguridad futura | fuera de fase actual |
 
 ## Servicios de usuario
