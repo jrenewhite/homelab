@@ -185,12 +185,20 @@ Este documento separa:
 - software base:
 - `Docker 29.1.3`
 - `Docker Compose 2.40.3`
+- storage local-first preparado:
+- `/storage/apps` -> `apps:apps` `2775`
+- `/storage/cache` -> `apps:apps` `2775`
+- `/storage/inbox` -> `apps:docs_rw` `2775`
+- `/storage/media-staging` -> `apps:media_rw` `2775`
+- `/storage/sync-out` -> `apps:apps` `2775`
 - mounts `NFS` esperados:
 - `/srv/media -> nas:/srv/media`
 - `/srv/docs -> nas:/srv/docs`
 - observación `2026-05-27`:
 - `/etc/fstab` ya fue reconciliado hacia `192.168.0.11:/srv/media` y `192.168.0.11:/srv/docs`
 - ambos mounts `NFS` vuelven a estar activos en `services`
+- brecha detectada en `Microplan 03`:
+- un `rsync` naive desde `/storage/sync-out` hacia `/srv/docs` preserva `apps:apps` en el destino final y no normaliza automáticamente a `docs_rw`
 - rol previsto: nodo principal de servicios con `Docker` y `Portainer`
 
 ## Leases observados no confirmados
@@ -217,6 +225,9 @@ Este documento separa:
 - grupos `media_rw`, `media_ro`, `docs_rw`, `docs_ro`
 - `jrenewhite` ya pertenece a `media_rw` y `docs_rw`
 - `services` ya puede volver a validarse como escritor sobre `NFS`
+- `Microplan 03B` ya validó normalización explícita de sync:
+  - `docs` puede quedar como `apps:docs_rw` `2775/664`
+  - `media` puede quedar como `apps:media_rw` `2775/664`
 
 ## Auditoría no-core de reservas
 

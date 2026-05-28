@@ -23,6 +23,7 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 - `nas` nunca es dependencia runtime obligatoria de apps críticas;
 - `/srv/media` y `/srv/docs` son namespaces finales, no working storage permanente;
 - `sync` puede ser programado o bajo demanda, pero nunca requisito para que arranque una app.
+- el sync final debe normalizar owner, grupo y modo según namespace destino, sin preservar metadata de staging si contradice el archivo final;
 - el modelo multi-site es `activo-local por sitio + ventanas de sincronización`
 - la sincronización entre `Colibrí` y `Perú` se hace por ventanas de bajo tráfico sostenido
 - ningún cambio de storage se hace simultáneamente con cambios de IP, DNS o túneles
@@ -42,6 +43,17 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 
 - `/srv/media`
 - `/srv/docs`
+
+### Normalización final de sync
+
+- destino `docs`: `apps:docs_rw`, directorios `2775`, archivos `664`
+- destino `media`: `apps:media_rw`, directorios `2775`, archivos `664`
+- comandos recomendados:
+
+```bash
+sudo -u apps rsync -avh --chown=apps:docs_rw --chmod=D2775,F664 SRC/ /srv/docs/DEST/
+sudo -u apps rsync -avh --chown=apps:media_rw --chmod=D2775,F664 SRC/ /srv/media/DEST/
+```
 
 ## Matriz por tipo de servicio
 
@@ -77,6 +89,11 @@ Cerrar la regla arquitectónica más importante: `services` trabaja local y `nas
 
 - ninguna app crítica depende de que `/srv/media` o `/srv/docs` estén montados para arrancar;
 - la arquitectura por servicio declara claramente local, sync y archivo final;
+- cada servicio queda clasificado con:
+  - `storage_readiness`
+  - `operational_readiness`
+  - `blocking_microplan` cuando aplique;
+- `Microplan 03` decide storage readiness, no despliegue operacional por sí solo;
 - wake/sync/sleep queda documentado antes de implementación.
 
 ## Prechecks mínimos
