@@ -1,0 +1,33 @@
+---
+- name: Bootstrap SSH access
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure admin group exists
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ admin_groups }}"
+
+    - name: Ensure admin user exists
+      ansible.builtin.user:
+        name: "{{ admin_user }}"
+        shell: "{{ admin_shell }}"
+        groups: "{{ admin_groups }}"
+        append: true
+        create_home: true
+        state: present
+
+    - name: Install admin public key
+      ansible.posix.authorized_key:
+        user: "{{ admin_user }}"
+        key: "{{ ssh_admin_public_key }}"
+        state: present
+
+    - name: Optionally enable passwordless sudo
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/90-{{ admin_user }}
+        mode: "0440"
+        content: "{{ admin_user }} ALL=(ALL) NOPASSWD:ALL\n"
+        validate: /usr/sbin/visudo -cf %s
+      when: set_passwordless_sudo | bool

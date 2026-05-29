@@ -1,0 +1,5 @@
+pihole_enabled: true
+pihole_role: secondary
+pihole_listen_ip: 192.168.10.14
+pihole_web_port: 8201
+pihole_stack_dir: /srv/storage/appdata/pihole-secondary

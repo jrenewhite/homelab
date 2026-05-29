@@ -1,0 +1,39 @@
+---
+- name: Configure container host baseline
+  hosts: services:core:arm
+  become: true
+  vars:
+    container_runtime_packages_effective: >-
+      {{
+        container_runtime_packages_ubuntu
+        if ansible_distribution == 'Ubuntu'
+        else container_runtime_packages_debian
+      }}
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - containers_apply | bool
+        fail_msg: "Set containers_apply=true when ready to configure Docker."
+
+    - name: Install container runtime packages
+      ansible.builtin.package:
+        name: "{{ container_runtime_packages_effective }}"
+        state: present
+
+    - name: Ensure docker group exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add admin user to docker group
+      ansible.builtin.user:
+        name: "{{ admin_user }}"
+        groups: docker
+        append: true
+
+    - name: Enable and start Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true

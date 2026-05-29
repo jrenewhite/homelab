@@ -1,0 +1,40 @@
+admin_user: jrenewhite
+admin_shell: /bin/bash
+admin_groups:
+  - sudo
+
+set_passwordless_sudo: false
+
+base_packages_common:
+  - curl
+  - git
+  - htop
+  - jq
+  - rsync
+  - sudo
+  - tmux
+  - vim
+
+container_runtime_packages_ubuntu:
+  - docker.io
+  - docker-compose-v2
+
+container_runtime_packages_debian:
+  - docker-cli
+  - docker.io
+  - docker-compose
+
+tailscale_apply: false
+tailscale_auth_key: ""
+tailscale_extra_args: "--ssh"
+
+containers_apply: false
+pihole_apply: false
+
+pihole_timezone: America/Lima
+pihole_upstreams: "1.1.1.1;1.0.0.1"
+pihole_api_password: "lk.ZX.0409"
+pihole_disable_default_stevenblack: true
+pihole_blocklists:
+  - url: https://small.oisd.nl
+    comment: "Peru baseline: conservative community-recommended blocklist"

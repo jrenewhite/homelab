@@ -1,0 +1,42 @@
+---
+- name: Install and optionally bootstrap Tailscale
+  hosts: all
+  become: true
+  tasks:
+    - name: Refuse to run unless explicitly enabled
+      ansible.builtin.assert:
+        that:
+          - tailscale_apply | bool
+        fail_msg: "Set tailscale_apply=true when ready to automate Tailscale."
+
+    - name: Install Tailscale dependencies
+      ansible.builtin.package:
+        name:
+          - curl
+          - ca-certificates
+        state: present
+
+    - name: Check whether tailscale is already installed
+      ansible.builtin.command: tailscale version
+      register: tailscale_version
+      changed_when: false
+      failed_when: false
+
+    - name: Install Tailscale on Debian-family hosts
+      ansible.builtin.shell: curl -fsSL https://tailscale.com/install.sh | sh
+      args:
+        executable: /bin/bash
+      when:
+        - ansible_os_family == "Debian"
+        - tailscale_version.rc != 0
+
+    - name: Ensure tailscaled is enabled and running
+      ansible.builtin.service:
+        name: tailscaled
+        state: started
+        enabled: true
+
+    - name: Bring node up in Tailscale when auth key is provided
+      ansible.builtin.command:
+        cmd: "tailscale up --authkey={{ tailscale_auth_key }} {{ tailscale_extra_args }}"
+      when: tailscale_auth_key | length > 0

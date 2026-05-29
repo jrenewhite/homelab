@@ -1,0 +1,15 @@
+---
+- name: Set final hostnames
+  hosts: all
+  become: true
+  tasks:
+    - name: Set hostname to inventory name
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+
+    - name: Ensure localhost mapping contains hostname
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: '^127\.0\.1\.1\s+'
+        line: "127.0.1.1 {{ inventory_hostname }}"
+        state: present

@@ -1,0 +1,10 @@
+Network Name,MAC,IP,Status,Export to IP-MAC Binding,Description
+LAN,PENDING-MAC,192.168.10.10,TRUE,TRUE,peru-management / hardware pending
+LAN,PENDING-MAC,192.168.10.11,TRUE,TRUE,peru-nas / chassis NAS pending
+LAN,PENDING-MAC,192.168.10.12,TRUE,TRUE,peru-services / Minisforum UM870 Slim
+LAN,PENDING-MAC,192.168.10.13,TRUE,TRUE,peru-ai-gpu / Minisforum 790S7 RTX 5060
+LAN,PENDING-MAC,192.168.10.14,TRUE,TRUE,peru-rpi5-ultra / Raspberry Pi 5 8GB 240GB SSD
+LAN,PENDING-MAC,192.168.10.15,TRUE,TRUE,peru-rpi5-max / Raspberry Pi 5 8GB 240GB SSD
+LAN,PENDING-MAC,192.168.10.16,TRUE,TRUE,peru-rpi5-a / Raspberry Pi 5 8GB 240GB SSD
+LAN,PENDING-MAC,192.168.10.17,TRUE,TRUE,peru-rpi4-a / Raspberry Pi 4B 8GB 1TB SSD
+LAN,PENDING-MAC,192.168.10.18,TRUE,TRUE,peru-rpi4-b / Raspberry Pi 4B 8GB 1TB SSD
