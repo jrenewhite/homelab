@@ -50,3 +50,36 @@ Estado:
 - deuda técnica conocida
 - no urgente
 - safe de diferir mientras no dependamos de cold boots/WOL frecuentes
+
+### Nota operativa pendiente: `DNS2` por `DHCP` en `ER707-M2`
+
+Tras `Microplan 05C-05F`, el router quedo configurado con:
+
+- `DNS1 = 192.168.0.10`
+- `DNS2 = 1.1.1.1`
+
+Pero los clientes Linux observados recibieron solo:
+
+- `DNS=192.168.0.10`
+
+Esto no se concluyo solo por `resolvectl`; tambien se confirmo en leases efectivos.
+
+Lectura actual:
+
+- no se asume fallback publico entregado por `DHCP`
+- la continuidad actual se basa en:
+  - `Pi-hole` primario estable
+  - `Pi-hole` secundario validado por IP directa
+  - rollback manual del router con `no dns-server`
+  - posible configuracion manual de `DNS` secundario en clientes criticos
+
+Hipotesis pendientes:
+
+- comportamiento especifico de `Omada` al mezclar `DNS` local + `DNS` publico
+- clientes Linux/Tailscale pueden afectar presentacion u orden, pero no explican por si solos el lease observado
+
+Direccion futura:
+
+- inspeccion posterior especifica del `ER707-M2`
+- confirmar si el firmware realmente entrega dos `DNS` por `DHCP`
+- definir si esta limitacion se acepta o si requiere workaround documentado

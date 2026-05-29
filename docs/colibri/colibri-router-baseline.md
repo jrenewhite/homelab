@@ -28,9 +28,23 @@ Baseline objetivo para el `TP-Link ER707-M2` en `Standalone Mode`.
 - El equipo ofrece `ssh-rsa`
 - Autenticacion por `SSH` confirmada con el usuario administrativo del panel web
 - El pool DHCP efectivo se llama `LAN`
-- El baseline seguro aprobado para DNS LAN es:
-  - `pri_dns 192.168.0.10` cuando `Pi-hole` primario esté validado
-  - `snd_dns 1.1.1.1` como fallback de emergencia
+- Tras `05C`, el router quedo configurado con:
+  - `pri_dns 192.168.0.10`
+  - `snd_dns 1.1.1.1`
+- Tras `05D`, la lectura factual queda asi:
+  - clientes renovados validaron uso real de `192.168.0.10`
+  - en `bd795m` y `orangepi5-max` solo se observo `192.168.0.10` en los leases efectivos
+  - por ahora, la conclusion operativa es que `1.1.1.1` queda configurado en router pero no se esta entregando por `DHCP` como segundo `DNS`
+- nota operacional:
+  - no se asume fallback publico entregado por `DHCP`
+  - la continuidad actual se basa en:
+    - `Pi-hole` primario estable
+    - `Pi-hole` secundario validado por IP directa
+    - rollback manual del router con `no dns-server`
+    - configuracion manual de `DNS` secundario en clientes criticos si llegara a hacer falta
+- hipotesis pendiente:
+  - comportamiento especifico de `Omada` al mezclar `DNS` local + `DNS` publico
+  - la interaccion de clientes Linux/Tailscale puede afectar presentacion u orden, pero no explica por si sola el lease efectivo observado
 - `orangepi5-ultra` permanece como `Pi-hole` secundario de arquitectura, pero no como `snd_dns` del router en la primera etapa segura
 - Las reservas DHCP ya fueron importadas y los 8 nodos core ya aparecen operando en `.10-.17`
 

@@ -81,9 +81,24 @@ Este documento separa:
 - emisor validado para wake real:
   - `orangepi5-ultra`
 - `Pi-hole` objetivo:
-  - DNS en `192.168.0.10:53`
-  - UI en `http://192.168.0.10:8080/admin`
-  - baseline de listas: `OISD small`
+- DNS en `192.168.0.10:53`
+- UI en `http://192.168.0.10:8200/admin`
+- baseline de listas: `OISD small`
+- estado staged real en `2026-05-28`:
+  - contenedor `pihole` `healthy`
+  - persistencia en `/opt/stacks/pihole-primary`
+  - `StevenBlack` deshabilitada y `OISD small` habilitada
+  - expuesto al host en `192.168.0.10:53 tcp/udp`
+  - UI expuesta en `192.168.0.10:8200`
+  - validado por `dig @192.168.0.10 cloudflare.com` y `curl http://192.168.0.10:8200/admin`
+  - `split-horizon` staged listo en `2026-05-29` para:
+    - `home.white-enciso.com`
+    - `auth.white-enciso.com`
+    - `jellyfin.white-enciso.com`
+    - `paperless.white-enciso.com`
+    - `immich.white-enciso.com`
+    - `navidrome.white-enciso.com`
+  - todos resolviendo localmente a `192.168.0.10` como placeholder del proxy futuro
 - automatización staged de DNS:
   - helper `router-cli.expect` desplegado en `/opt/colibri/bin`
   - script `router-dns-cutover-with-rollback.sh` desplegado en `/opt/colibri/bin`
@@ -154,9 +169,22 @@ Este documento separa:
 - `Docker Compose 2.26.1`
 - `colibri-cpufreq-tune.service` activo con tope `2016000` en clusters grandes
 - `Pi-hole` secundario objetivo:
-  - DNS en `192.168.0.14:53`
-  - UI en `http://192.168.0.14:8080/admin`
-  - baseline de listas: `OISD small`
+- DNS en `192.168.0.14:53`
+- UI en `http://192.168.0.14:8201/admin`
+- baseline de listas: `OISD small`
+- estado staged real en `2026-05-28`:
+- contenedor `pihole` reconciliado y expuesto en `192.168.0.14:53 tcp/udp`
+- UI expuesta en `192.168.0.14:8201`
+- validado por `dig @192.168.0.14 cloudflare.com` y `curl http://192.168.0.14:8201/admin`
+- `192.168.0.14:8080` permanece asignado a `ntfy-local`
+- replica manual de `split-horizon` staged en `2026-05-29` para:
+  - `home.white-enciso.com`
+  - `auth.white-enciso.com`
+  - `jellyfin.white-enciso.com`
+  - `paperless.white-enciso.com`
+  - `immich.white-enciso.com`
+  - `navidrome.white-enciso.com`
+- todos resolviendo localmente a `192.168.0.10`
 - canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
 - `sudoers` acotado para ejecución sin password del canary checker
 - canary principal usado con éxito en el cutover real de DNS LAN del router
@@ -179,9 +207,14 @@ Este documento separa:
 - `Docker Compose 2.26.1`
 - `colibri-cpufreq-tune.service` activo con tope `2016000` en clusters grandes
 - `Pi-hole` terciario objetivo:
-  - DNS en `192.168.0.15:53`
-  - UI en `http://192.168.0.15:8080/admin`
-  - baseline de listas: `OISD small`
+- DNS en `192.168.0.15:53`
+- UI en `http://192.168.0.15:8202/admin`
+- baseline de listas: `OISD small`
+- estado staged real en `2026-05-28`:
+- `192.168.0.15:53` no responde por IP directa
+- `192.168.0.15:8080` no responde
+- `8202` queda libre como objetivo limpio para `Pi-hole`
+- sin validacion por `SSH` en `05A`
 - canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
 - `sudoers` acotado para ejecución sin password del canary checker
 
