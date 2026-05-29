@@ -318,6 +318,8 @@ Por nodo se debe registrar:
 - `NUT` sigue en observacion para `LinkedPro`
 - `Epcom` sigue como rama manual/no instrumentada
 - `ntfy-local` queda como receptor local de alertas no destructivas
+- puerto actual de `ntfy-local` tras `06A.1`:
+  - `http://192.168.0.14:8300`
 - `WOL` manual queda permitido solo en `OL` y solo para nodos ya validados
 - `WOL` automatico y `shutdown` automatico siguen prohibidos
 

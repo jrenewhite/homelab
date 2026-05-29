@@ -1,0 +1,8 @@
+# hostname: jellyfin.white-enciso.com
+# pattern: placeholder
+# backend real futuro: Jellyfin
+# nodo futuro: ai-gpu
+# puerto futuro: por definir en fase de backend real
+http://jellyfin.white-enciso.com {
+	import placeholder_response
+}

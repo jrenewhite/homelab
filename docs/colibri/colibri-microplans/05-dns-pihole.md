@@ -450,6 +450,11 @@ Caveats:
   - `ntfy.white-enciso.com`
   - `pihole.white-enciso.com`
 
+Nota posterior:
+
+- `Microplan 06B` si agrega `ntfy.white-enciso.com` al `split-horizon` local
+- el registro sigue apuntando a `192.168.0.10`, pero ya como entrada real hacia `Caddy` local en `management`
+
 Veredicto:
 
 - `05E`: `pass`

@@ -50,7 +50,7 @@ sudo -u apps rsync -avh --chown=apps:media_rw --chmod=D2775,F664 SRC/ /srv/media
 | ntfy | `orangepi5-ultra` o `management` | `ready` | `simple-deploy` | volumen local del nodo | none | `nas:/srv/docs/backups` | `sí` | `backup` | `optional` | none | despliegue inicial puede ser directo, pero el estado objetivo es `Docker Compose` versionado con secretos fuera de git |
 | Diun | `management` | `ready` | `simple-deploy` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `none` | none | casi stateless |
 | Restic/Kopia | `services` | `ready` | `simple-deploy` | `/storage/apps/restic-kopia` | `/storage/sync-out` | `nas:/srv/docs/backups` | `parcial` | `backup` | `optional` | none | puede operar local, target final por ventana |
-| Homepage | `management` | `ready` | `simple-deploy` | volumen local del nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `optional` | none | herramienta admin, mejor en `management` |
+| Homepage | `management` | `ready` | `simple-deploy` | volumen local del nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `optional` | none | ya desplegado en `management` con runtime en `/opt/stacks/homepage`, backend `127.0.0.1:8080`, proxy local por `Caddy` en `home.white-enciso.com` y curacion inicial sin secretos para operaciones, DNS, alerting y servicios staged |
 | Emergency Homepage | `orangepi5-ultra` | `ready` | `simple-deploy` | volumen local del nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | none | dashboard resiliente mínimo |
 
 ## Identidad y seguridad

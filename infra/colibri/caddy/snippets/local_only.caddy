@@ -1,0 +1,6 @@
+(local_only) {
+	# `Caddy` local-only en esta etapa:
+	# - sin TLS
+	# - sin cloudflared
+	# - sin publicacion publica
+}

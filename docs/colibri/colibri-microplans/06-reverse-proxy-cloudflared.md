@@ -91,3 +91,405 @@ Definir exposición externa e interna de servicios con `Caddy` y `cloudflared`.
 
 - VIP futura
 - balanceo L7 complejo
+
+## `06A` — Caddy local-only placeholder
+
+Resultado factual de `06A`:
+
+- `Caddy` ya quedo instalado en `management` como proxy local-only
+- puertos observados antes del cambio:
+  - `80`, `443` y `8080` libres en `management`
+- en esta fase solo se activo:
+  - `80/tcp`
+- no se activo:
+  - `cloudflared`
+  - `TLS` publico
+  - backends reales
+
+Hostnames staged servidos por placeholder:
+
+- `home.white-enciso.com`
+- `auth.white-enciso.com`
+- `jellyfin.white-enciso.com`
+- `paperless.white-enciso.com`
+- `immich.white-enciso.com`
+- `navidrome.white-enciso.com`
+
+Implementacion:
+
+- `Caddy` instalado por paquete del sistema en `management`
+- `Caddyfile` local-only en `/etc/caddy/Caddyfile`
+- `auto_https off`
+- `admin off`
+- respuesta `HTTP 200` controlada para cada hostname staged
+
+Validacion:
+
+- `curl http://home.white-enciso.com`: `200 OK`
+- `curl http://auth.white-enciso.com`: `200 OK`
+- `curl http://jellyfin.white-enciso.com`: `200 OK`
+- `curl http://paperless.white-enciso.com`: `200 OK`
+- `curl http://immich.white-enciso.com`: `200 OK`
+- `curl http://navidrome.white-enciso.com`: `200 OK`
+- `Caddy` queda `active (running)`
+- `ss -lntup` muestra `*:80`
+
+Lectura operativa:
+
+- `06A` valida la capa de proxy local minimo
+- los hostnames staged ya no solo resuelven; ahora tambien responden localmente en `HTTP`
+- esto sigue siendo placeholder controlado:
+  - no conecta apps reales
+  - no publica nada a Internet
+  - no implica `SSO`
+
+Caveats:
+
+- el placeholder actual responde texto simple, no backend real
+- no se habilito `443`
+- no se emitieron certificados
+- `cloudflared` sigue fuera de fase
+
+Veredicto:
+
+- `06A`: `pass`
+- `06B` conectar primer backend real local: `go`
+
+## `06A.1` — Migracion de `ntfy-local` al rango de alerting
+
+Resultado factual de `06A.1`:
+
+- `ntfy-local` ya no usa `192.168.0.14:8080`
+- `ntfy-local` ahora queda expuesto en:
+  - `http://192.168.0.14:8300`
+- `8080` vuelve a quedar limpio para el `Homepage` principal segun la politica de puertos
+
+Implementacion observada:
+
+- `ntfy-local` sigue corriendo en `orangepi5-ultra` como contenedor Docker directo/manual
+- no se migro aun a `Docker Compose` versionado
+- se actualizo `server.yml` persistido para usar:
+  - `base-url: http://192.168.0.14:8300`
+- el contenedor se recreo solo con cambio de publicacion de puerto:
+  - `192.168.0.14:8300 -> 80/tcp`
+
+Integracion `NUT`:
+
+- se actualizo `/opt/colibri-secrets/ntfy.env` en:
+  - `management`
+  - `services`
+  - `nas`
+  - `ai-gpu`
+  - `orangepi5-ultra`
+- el endpoint efectivo pasa a ser:
+  - `NTFY_URL=http://192.168.0.14:8300/colibri-ups-33883960f764a3bf`
+
+Validacion:
+
+- `curl http://192.168.0.14:8300/`: `200 OK`
+- `curl http://192.168.0.14:8080/`: sin respuesta de `ntfy-local`
+- `nut-server` y `nut-monitor` siguen sanos en `management`
+- `nut-monitor` sigue sano en `services`
+- pruebas sinteticas no destructivas desde `management` y `services` siguieron generando `nut-event`
+- `docker logs` de `ntfy-local` mostro incremento de `messages_published` tras la migracion
+
+Caveats:
+
+- la deuda tecnica de `ntfy-local` como contenedor directo/manual sigue vigente hasta migrarlo a stack versionado
+- la invocacion manual del hook como usuario no privilegiado no puede leer `/opt/colibri-secrets/ntfy.env`; la validacion real de entrega se hizo con ejecucion privilegiada y el logger local siguio funcionando incluso al forzar fallo de `ntfy`
+
+Lectura operativa:
+
+- `06A.1` cierra el conflicto de puerto con `Homepage`
+- no toca `Caddy`, `Pi-hole`, `router` ni politicas de energia
+- deja la capa de alerting en el rango reservado `8300-8399`
+
+## `06A.2` — Caddy config governance
+
+Resultado factual de `06A.2`:
+
+- la configuracion de `Caddy` ya tiene fuente de verdad versionada en el repo
+- `management` queda como runtime, no como origen de edicion
+- la estructura modular creada es:
+  - `infra/colibri/caddy/Caddyfile`
+  - `infra/colibri/caddy/snippets/`
+  - `infra/colibri/caddy/sites/`
+  - `infra/colibri/caddy/README.md`
+
+Implementacion:
+
+- `Caddyfile` principal con:
+  - `auto_https off`
+  - `admin off`
+  - `import snippets/*.caddy`
+  - `import sites/*.caddy`
+- snippets comunes iniciales:
+  - `common_headers`
+  - `placeholder_response`
+- sitios actuales movidos a archivos separados en `sites/`:
+  - `home.white-enciso.com`
+  - `auth.white-enciso.com`
+  - `jellyfin.white-enciso.com`
+  - `paperless.white-enciso.com`
+  - `immich.white-enciso.com`
+  - `navidrome.white-enciso.com`
+
+Runtime en `management`:
+
+- `/etc/caddy/Caddyfile`
+- `/etc/caddy/snippets/*.caddy`
+- `/etc/caddy/sites/*.caddy`
+
+Validacion:
+
+- `caddy validate --config /etc/caddy/Caddyfile`: `Valid configuration`
+- placeholders siguen respondiendo `HTTP 200`
+- headers observados:
+  - `X-Colibri-Proxy: caddy-local-only`
+  - `X-Colibri-Phase: 06A.2`
+
+Caveat operativo:
+
+- con `admin off`, `systemctl reload caddy` falla porque el paquete intenta usar el admin API interno
+- el patron sano para esta fase queda:
+  - `caddy validate`
+  - `systemctl restart caddy`
+
+Lectura operativa:
+
+- `06A.2` deja a `git` como fuente de verdad para la capa local de proxy
+- no activa `TLS`
+- no activa `cloudflared`
+- no conecta aun backends reales
+
+Veredicto:
+
+- `06A.2`: `pass`
+- `06B` conectar primer backend real local: `go`
+
+## `06B` — Primer backend real local con `Caddy`
+
+Resultado factual de `06B`:
+
+- primer backend real conectado:
+  - `ntfy.white-enciso.com`
+- proxy local:
+  - `management` `192.168.0.10`
+- backend real:
+  - `http://192.168.0.14:8300`
+
+Prechecks cumplidos:
+
+- `ntfy-local` respondia por IP directa en `192.168.0.14:8300`
+- `Caddy` seguia `active`
+- los placeholders existentes seguian respondiendo
+- `8080` seguia libre para `Homepage`
+
+DNS local:
+
+- `ntfy.white-enciso.com` se agrego en `Pi-hole` primario y secundario
+- ambos devuelven:
+  - `192.168.0.10`
+
+Configuracion versionada:
+
+- se agrego:
+  - `infra/colibri/caddy/sites/ntfy.caddy`
+- contenido efectivo:
+  - `http://ntfy.white-enciso.com { reverse_proxy 192.168.0.14:8300 }`
+
+Aplicacion a runtime:
+
+- el site versionado se sincronizo a:
+  - `/etc/caddy/sites/ntfy.caddy`
+- validacion:
+  - `caddy validate --config /etc/caddy/Caddyfile`: `Valid configuration`
+- reinicio efectivo:
+  - `systemctl restart caddy`
+  - `caddy` quedo `active`
+
+Validacion funcional:
+
+- `dig ntfy.white-enciso.com`: `192.168.0.10`
+- `curl http://ntfy.white-enciso.com/`: `HTTP 200`
+- `POST` sintetico por hostname:
+  - `http://ntfy.white-enciso.com/colibri-ups-33883960f764a3bf`
+  - devolvio evento JSON valido de `ntfy`
+- `ntfy-local` siguio respondiendo por IP directa:
+  - `http://192.168.0.14:8300/`
+- los placeholders `home`, `auth`, `jellyfin`, `paperless`, `immich` y `navidrome` siguieron respondiendo sin cambios
+
+Lectura operativa:
+
+- `06B` conecta el primer backend real local sin activar `TLS`, `cloudflared` ni exposicion publica
+- `ntfy.white-enciso.com` ya no es solo placeholder DNS; ahora es un servicio local funcional a traves de `Caddy`
+
+Veredicto:
+
+- `06B`: `pass`
+- `06C`: `go`
+
+## `06C` — Caddy service pattern and reverse proxy conventions
+
+Resultado factual de `06C`:
+
+- el patron de configuracion `Caddy` queda estandarizado antes de conectar mas backends
+- la fuente de verdad sigue en:
+  - `infra/colibri/caddy`
+- `management` sigue siendo solo runtime
+
+Convenciones cerradas:
+
+- un archivo por hostname o servicio en `sites/`
+- comentarios cortos por archivo con:
+  - `hostname`
+  - `pattern`
+  - `backend`
+  - `nodo`
+  - `puerto`
+- snippets reutilizables base:
+  - `common_headers`
+  - `local_only`
+  - `proxy_headers`
+  - `placeholder_response`
+- flujo oficial:
+  - editar en repo
+  - sincronizar a `/etc/caddy`
+  - `caddy validate`
+  - `systemctl restart caddy`
+  - probar con `curl`
+
+Cambios funcionales no disruptivos:
+
+- placeholders siguen igual, pero ahora responden con:
+  - `X-Colibri-Phase: 06C`
+- `ntfy.white-enciso.com` sigue operativo por hostname
+- `proxy_headers` se redujo a lo minimo util para evitar warnings redundantes de `Caddy`
+
+Validacion:
+
+- `caddy validate --config /etc/caddy/Caddyfile`: `Valid configuration`
+- `systemctl restart caddy`: `active`
+- `curl http://ntfy.white-enciso.com/`: `200 OK`
+- `POST` sintetico por hostname a `ntfy`: `ok`
+- placeholders `home`, `auth`, `jellyfin`, `paperless`, `immich`, `navidrome`: `HTTP 200`
+
+Lectura operativa:
+
+- `06C` no conecta backends nuevos
+- `06C` no activa `TLS`
+- `06C` no activa `cloudflared`
+- deja lista una base repetible para `Colibri` y luego para `Peru`
+
+Veredicto:
+
+- `06C`: `pass`
+- `06D` conectar `Homepage` o segundo backend real: `go`
+
+## `06D` — Homepage como segundo backend real local
+
+Resultado factual de `06D`:
+
+- `Homepage` ya queda desplegado en `management`
+- backend local:
+  - `http://127.0.0.1:8080`
+- hostname real por `Caddy`:
+  - `home.white-enciso.com`
+
+Implementacion elegida:
+
+- `Homepage` desplegado con Docker Compose
+- fuente de verdad versionada en:
+  - `infra/colibri/homepage`
+- runtime desplegado en:
+  - `/opt/stacks/homepage`
+
+Configuracion `Caddy`:
+
+- el placeholder previo de `home.white-enciso.com` se reemplaza por backend real
+- site versionado:
+  - `infra/colibri/caddy/sites/home.caddy`
+- backend efectivo:
+  - `reverse_proxy 127.0.0.1:8080`
+
+Validacion:
+
+- `curl http://127.0.0.1:8080/`: `200 OK`
+- `curl http://home.white-enciso.com/`: `200 OK`
+- `curl http://ntfy.white-enciso.com/`: `200 OK`
+- placeholders restantes:
+  - `auth`
+  - `jellyfin`
+  - `paperless`
+  - `immich`
+  - `navidrome`
+  - siguen `HTTP 200`
+- `caddy validate --config /etc/caddy/Caddyfile`: `Valid configuration`
+- `systemctl restart caddy`: `active`
+
+Lectura operativa:
+
+- `home.white-enciso.com` ya no es placeholder
+- `Homepage` queda como segundo backend real local
+- no se activa `TLS`
+- no se activa `cloudflared`
+- no se conecta ningun backend adicional en esta fase
+
+Veredicto:
+
+- `06D`: `pass`
+- `06E`: `go`
+
+## `06E` — Curacion inicial de `Homepage`
+
+Resultado factual de `06E`:
+
+- la configuracion versionada de `Homepage` queda curada con una vista inicial util para `Colibri`
+- no se agregan secretos
+- no se conectan nuevos backends reales
+
+Secciones creadas:
+
+- `Core / Operations`
+- `Network / DNS`
+- `Alerts / Energy`
+- `Apps staged`
+- `Media staged`
+- `Admin / Future`
+
+Estado reflejado en la vista:
+
+- activos:
+  - `home.white-enciso.com`
+  - `ntfy.white-enciso.com`
+  - `Pi-hole Primary`
+  - `Pi-hole Secondary`
+- staged:
+  - `auth.white-enciso.com`
+  - `paperless.white-enciso.com`
+  - `immich.white-enciso.com`
+  - `jellyfin.white-enciso.com`
+  - `navidrome.white-enciso.com`
+
+Archivos modificados:
+
+- `infra/colibri/homepage/config/settings.yaml`
+- `infra/colibri/homepage/config/services.yaml`
+- `infra/colibri/homepage/config/bookmarks.yaml`
+- `infra/colibri/homepage/config/widgets.yaml`
+
+Validacion:
+
+- `curl http://127.0.0.1:8080/`: `200 OK`
+- `curl http://home.white-enciso.com/`: `200 OK`
+- `curl http://ntfy.white-enciso.com/`: `200 OK`
+- placeholders restantes siguen `HTTP 200`
+
+Caveat:
+
+- `curl` permite confirmar reachability y parte del contenido renderizado, pero la revision visual en navegador sigue siendo recomendable para validar la presentacion final del dashboard
+
+Veredicto:
+
+- `06E`: `pass`
+- siguiente backend real local: `go`

@@ -19,6 +19,7 @@
 ## Docker Governance
 
 - `Git + Docker Compose` es la fuente de verdad para stacks.
+- la configuracion de `Caddy` tambien queda versionada en `git`, con fuente de verdad en `infra/colibri/caddy`
 - `Portainer` y `Dockge` son herramientas de operacion y visibilidad, no el mecanismo primario para definir configuracion.
 - los secretos permanecen fuera de `git`
 - los nodos deben seguir siendo operables en modo `headless`
@@ -43,11 +44,11 @@
 | `Pi-hole` secundario UI | `orangepi5-ultra` | `192.168.0.14:8201` | `192.168.0.14:8201` | LAN/Tailscale | `active` |
 | `Pi-hole` terciario DNS | `orangepi5-max` | none visible en `05A` | `192.168.0.15:53 tcp/udp` | LAN | `future` |
 | `Pi-hole` terciario UI | `orangepi5-max` | none visible en `05A` | `192.168.0.15:8202` | LAN/Tailscale | `future` |
-| `Caddy` principal | `management` | reservado | `80/443` | LAN/publica segun fase | `reserved` |
+| `Caddy` principal | `management` | `80/tcp` local-only placeholder activo; `443` libre/no usado | `80/443` | LAN ahora; publica en fase futura | `active` |
 | `Caddy` backup | `orangepi5-ultra` | reservado | `80/443` | LAN/publica segun fase | `reserved` |
-| `Homepage` | `management` | reservado | `8080` | LAN/Tailscale | `reserved` |
+| `Homepage` | `management` | `127.0.0.1:8080` backend local; expuesto por `Caddy` en `home.white-enciso.com` | `8080` | LAN/Tailscale | `active` |
 | `Emergency Homepage` | `orangepi5-ultra` | reservado | `8081` | LAN/Tailscale | `reserved` |
-| `ntfy-local` | `orangepi5-ultra` | `8080` | migrar a `8300-8399` en fase futura | LAN/Tailscale | `active debt` |
+| `ntfy-local` | `orangepi5-ultra` | `192.168.0.14:8300` | `192.168.0.14:8300` | LAN/Tailscale | `active` |
 | `Uptime Kuma` | `management` | none | `8300-8399` | LAN/Tailscale | `future` |
 | `Diun` | `management` | none | `8300-8399` | LAN/Tailscale | `future` |
 | `authentik` | `services` | none | `8400-8499` | LAN/Tailscale o reverse proxy | `future` |

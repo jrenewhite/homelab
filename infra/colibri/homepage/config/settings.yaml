@@ -1,0 +1,8 @@
+title: Colibri Homelab
+description: Vista local inicial de Colibri
+theme: dark
+color: slate
+headerStyle: clean
+hideVersion: true
+showStats: false
+statusStyle: dot

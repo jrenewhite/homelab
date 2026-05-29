@@ -1,0 +1,5 @@
+(common_headers) {
+	header Content-Type "text/plain; charset=utf-8"
+	header X-Colibri-Proxy "caddy-local-only"
+	header X-Colibri-Phase "06C"
+}

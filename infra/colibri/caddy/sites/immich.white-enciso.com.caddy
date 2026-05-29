@@ -1,0 +1,8 @@
+# hostname: immich.white-enciso.com
+# pattern: placeholder
+# backend real futuro: Immich core
+# nodo futuro: services
+# puerto futuro: por definir en fase de backend real
+http://immich.white-enciso.com {
+	import placeholder_response
+}

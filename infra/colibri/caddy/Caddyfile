@@ -1,0 +1,7 @@
+{
+	auto_https off
+	admin off
+}
+
+import snippets/*.caddy
+import sites/*.caddy

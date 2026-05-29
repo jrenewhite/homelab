@@ -1,0 +1,8 @@
+# hostname: paperless.white-enciso.com
+# pattern: placeholder
+# backend real futuro: Paperless-ngx
+# nodo futuro: services
+# puerto futuro: por definir en fase de backend real
+http://paperless.white-enciso.com {
+	import placeholder_response
+}

@@ -1,0 +1,8 @@
+# hostname: auth.white-enciso.com
+# pattern: placeholder
+# backend real futuro: authentik
+# nodo futuro: services
+# puerto futuro: por definir en fase de backend real
+http://auth.white-enciso.com {
+	import placeholder_response
+}

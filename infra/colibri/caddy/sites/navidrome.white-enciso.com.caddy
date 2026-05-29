@@ -1,0 +1,8 @@
+# hostname: navidrome.white-enciso.com
+# pattern: placeholder
+# backend real futuro: Navidrome
+# nodo futuro: services
+# puerto futuro: por definir en fase de backend real
+http://navidrome.white-enciso.com {
+	import placeholder_response
+}

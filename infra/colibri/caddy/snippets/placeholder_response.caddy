@@ -1,0 +1,5 @@
+(placeholder_response) {
+	import local_only
+	import common_headers
+	respond "Colibri staged placeholder via Caddy on management\nhost={http.request.host}\nphase=06C\nbackend=placeholder\nstatus=local-only\n" 200
+}

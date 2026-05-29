@@ -1,0 +1,32 @@
+- Core:
+    - Homepage:
+        - abbr: HOME
+          href: http://home.white-enciso.com
+    - ntfy:
+        - abbr: NTFY
+          href: http://ntfy.white-enciso.com
+
+- DNS:
+    - Pi-hole Primary:
+        - abbr: PH1
+          href: http://192.168.0.10:8200/admin
+    - Pi-hole Secondary:
+        - abbr: PH2
+          href: http://192.168.0.14:8201/admin
+
+- Staged:
+    - Auth:
+        - abbr: AUTH
+          href: http://auth.white-enciso.com
+    - Paperless:
+        - abbr: DOCS
+          href: http://paperless.white-enciso.com
+    - Immich:
+        - abbr: IMG
+          href: http://immich.white-enciso.com
+    - Jellyfin:
+        - abbr: JF
+          href: http://jellyfin.white-enciso.com
+    - Navidrome:
+        - abbr: NAV
+          href: http://navidrome.white-enciso.com

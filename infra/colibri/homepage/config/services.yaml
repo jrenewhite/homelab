@@ -1,0 +1,50 @@
+- Core / Operations:
+    - Homepage:
+        href: http://home.white-enciso.com
+        description: active · dashboard local de Colibri
+    - ntfy:
+        href: http://ntfy.white-enciso.com
+        description: active · alerting local via Caddy
+
+- Network / DNS:
+    - Pi-hole Primary:
+        href: http://192.168.0.10:8200/admin
+        description: active · DNS primario local
+    - Pi-hole Secondary:
+        href: http://192.168.0.14:8201/admin
+        description: active · DNS secundario local
+
+- Alerts / Energy:
+    - ntfy Alerts:
+        href: http://ntfy.white-enciso.com
+        description: active · receptor local de alertas NUT
+    - Homepage Ops:
+        href: http://home.white-enciso.com
+        description: active · punto de entrada local de operaciones
+
+- Apps staged:
+    - auth:
+        href: http://auth.white-enciso.com
+        description: staged · placeholder de Caddy
+    - paperless:
+        href: http://paperless.white-enciso.com
+        description: staged · placeholder de Caddy
+    - immich:
+        href: http://immich.white-enciso.com
+        description: staged · placeholder de Caddy
+
+- Media staged:
+    - jellyfin:
+        href: http://jellyfin.white-enciso.com
+        description: staged · placeholder de Caddy
+    - navidrome:
+        href: http://navidrome.white-enciso.com
+        description: staged · placeholder de Caddy
+
+- Admin / Future:
+    - Pi-hole Primary Admin:
+        href: http://192.168.0.10:8200/admin
+        description: active · admin local
+    - Pi-hole Secondary Admin:
+        href: http://192.168.0.14:8201/admin
+        description: active · admin local

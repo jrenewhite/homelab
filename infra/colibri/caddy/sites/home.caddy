@@ -1,0 +1,11 @@
+# hostname: home.white-enciso.com
+# pattern: reverse_proxy
+# backend real: Homepage
+# nodo real: management
+# puerto real: 8080
+http://home.white-enciso.com {
+	import local_only
+	reverse_proxy 127.0.0.1:8080 {
+		import proxy_headers
+	}
+}

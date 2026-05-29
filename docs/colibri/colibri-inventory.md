@@ -98,13 +98,42 @@ Este documento separa:
     - `paperless.white-enciso.com`
     - `immich.white-enciso.com`
     - `navidrome.white-enciso.com`
+    - `ntfy.white-enciso.com`
   - todos resolviendo localmente a `192.168.0.10` como placeholder del proxy futuro
+  - excepcion ya conectada en `2026-05-29`:
+    - `home.white-enciso.com` ya no es solo placeholder
+    - `Caddy` en `management` lo proxyea al backend real `http://127.0.0.1:8080`
+    - `ntfy.white-enciso.com` ya no es solo placeholder
+    - `Caddy` en `management` lo proxyea al backend real `http://192.168.0.14:8300`
 - automatización staged de DNS:
   - helper `router-cli.expect` desplegado en `/opt/colibri/bin`
   - script `router-dns-cutover-with-rollback.sh` desplegado en `/opt/colibri/bin`
   - secreto local esperado en `/opt/colibri-secrets/router.env`
   - dry-run lógico validado con `orangepi5-ultra` como canary
   - cutover real aplicado con rollback automático armado y no requerido
+- `Caddy` staged real en `2026-05-29`:
+  - paquete `caddy` instalado
+  - servicio `active`
+  - placeholder local-only activo en `*:80`
+  - hostnames staged (`home`, `auth`, `jellyfin`, `paperless`, `immich`, `navidrome`) responden `HTTP 200`
+  - sin `TLS` publico y sin backends reales conectados aun
+  - fuente de verdad versionada en:
+    - `infra/colibri/caddy/Caddyfile`
+    - `infra/colibri/caddy/snippets/`
+    - `infra/colibri/caddy/sites/`
+  - runtime alineado en:
+    - `/etc/caddy/Caddyfile`
+    - `/etc/caddy/snippets/`
+    - `/etc/caddy/sites/`
+  - backends reales locales ya conectados:
+    - `home.white-enciso.com` -> `127.0.0.1:8080`
+    - `ntfy.white-enciso.com` -> `192.168.0.14:8300`
+- `Homepage` staged real en `2026-05-29`:
+  - stack versionado en `infra/colibri/homepage`
+  - runtime desplegado en `/opt/stacks/homepage`
+  - contenedor `homepage` activo en `management`
+  - backend local en `127.0.0.1:8080`
+  - expuesto por `Caddy` en `home.white-enciso.com`
 
 ### `nas` - `AOOSTAR WTR PRO`
 
@@ -176,7 +205,8 @@ Este documento separa:
 - contenedor `pihole` reconciliado y expuesto en `192.168.0.14:53 tcp/udp`
 - UI expuesta en `192.168.0.14:8201`
 - validado por `dig @192.168.0.14 cloudflare.com` y `curl http://192.168.0.14:8201/admin`
-- `192.168.0.14:8080` permanece asignado a `ntfy-local`
+- `ntfy-local` migrado en `2026-05-29` a `192.168.0.14:8300`
+- `8080` queda libre para `Homepage`
 - replica manual de `split-horizon` staged en `2026-05-29` para:
   - `home.white-enciso.com`
   - `auth.white-enciso.com`
@@ -184,6 +214,7 @@ Este documento separa:
   - `paperless.white-enciso.com`
   - `immich.white-enciso.com`
   - `navidrome.white-enciso.com`
+  - `ntfy.white-enciso.com`
 - todos resolviendo localmente a `192.168.0.10`
 - canary script desplegado en `/usr/local/lib/colibri/dns-canary-check`
 - `sudoers` acotado para ejecución sin password del canary checker
@@ -403,7 +434,7 @@ Este documento separa:
 - `04D` ya deja una politica uniforme de eventos `NUT` con `NOTIFYCMD` local a `logger`, sin acciones destructivas.
 - `04E` ya valida la salida `nut-event` en journal/syslog con eventos sinteticos `ONBATT`, `LOWBATT`, `COMMOK` y `ONLINE`.
 - `04F` ya deja una ruta de notificacion externa `best-effort` por `curl` + `ntfy`, condicionada a secretos locales fuera de git.
-- `04F.1` ya deja `ntfy` corriendo en `orangepi5-ultra` en `http://192.168.0.14:8080`, con topic no trivial distribuido via `/opt/colibri-secrets/ntfy.env`.
+- `04F.1` ya deja `ntfy` operativo como receptor local de alertas; `06A.1` migro su publicacion a `http://192.168.0.14:8300`, con topic no trivial distribuido via `/opt/colibri-secrets/ntfy.env`.
 - `services` contradice la doc vieja: no ve UPS local y no debe ser `NUT master`.
 - `nas` no debe despertarse en bateria aunque su `WOL` este habilitado hoy.
 - `ai-gpu` recupero `SSH` en esta ventana y quedo con `WOL` habilitado, pero no mostro UPS local.
