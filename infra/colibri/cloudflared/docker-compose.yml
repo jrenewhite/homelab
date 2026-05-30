@@ -1,0 +1,27 @@
+name: colibri-cloudflared
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    entrypoint:
+      - cloudflared
+      - --no-autoupdate
+    env_file:
+      - /opt/colibri-secrets/cloudflared/cloudflared.env
+    command:
+      - tunnel
+      - --config
+      - /etc/cloudflared/config.yml
+      - run
+    volumes:
+      - ./config:/etc/cloudflared:ro
+      - /opt/colibri-secrets/cloudflared:/opt/colibri-secrets/cloudflared:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    labels:
+      com.colibri.stack: cloudflared
+      com.colibri.role: edge-tunnel
+      com.colibri.site: colibri
+      com.colibri.source: git

@@ -1,0 +1,13 @@
+# Example only.
+# Runtime target inside container: /etc/cloudflared/config.yml
+# Do not commit real tunnel credentials, token material, or cert.pem.
+# This template is token-first: the tunnel token lives in
+# /opt/colibri-secrets/cloudflared/cloudflared.env as TUNNEL_TOKEN.
+
+ingress:
+  # 06I canary allowlist: only home
+  - hostname: home.white-enciso.com
+    service: http://host.docker.internal:80
+
+  # default deny / catch-all
+  - service: http_status:404

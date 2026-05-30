@@ -39,7 +39,7 @@ sudo -u apps rsync -avh --chown=apps:media_rw --chmod=D2775,F664 SRC/ /srv/media
 | Pi-hole terciario opcional | `orangepi5-max` | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `optional` | `05-dns-pihole` | fallback local adicional |
 | Caddy principal | `management` | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | `06-reverse-proxy-cloudflared` | infraestructura core, no tema de storage |
 | Caddy backup | `orangepi5-ultra` | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | `06-reverse-proxy-cloudflared` | requiere redundancia local |
-| cloudflared principal | `management` | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | `06-reverse-proxy-cloudflared` | secretos y túneles fuera de storage |
+| cloudflared principal | `management` | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | `06-reverse-proxy-cloudflared` | canary ya desplegado por `Docker Compose` en `/opt/stacks/cloudflared`, token-first y allowlist solo para `home.white-enciso.com` |
 | cloudflared backup | `orangepi5-ultra` | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | `06-reverse-proxy-cloudflared` | requiere redundancia local |
 | Tailscale | `todos los nodos principales` | `defer` | `core-infra` | local a cada nodo | none | none | `sí` | `none` | `required` | `01-network-and-addressing` o microplan Tailscale futuro | acceso admin, no storage runtime |
 | Tailscale subnet router principal | `management` | `defer` | `core-infra` | local al nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | microplan Tailscale futuro | rol específico, no decidido por storage |
@@ -52,6 +52,28 @@ sudo -u apps rsync -avh --chown=apps:media_rw --chmod=D2775,F664 SRC/ /srv/media
 | Restic/Kopia | `services` | `ready` | `simple-deploy` | `/storage/apps/restic-kopia` | `/storage/sync-out` | `nas:/srv/docs/backups` | `parcial` | `backup` | `optional` | none | puede operar local, target final por ventana |
 | Homepage | `management` | `ready` | `simple-deploy` | volumen local del nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `optional` | none | ya desplegado en `management` con runtime en `/opt/stacks/homepage`, backend `127.0.0.1:8080`, proxy local por `Caddy` en `home.white-enciso.com` y curacion inicial sin secretos para operaciones, DNS, alerting y servicios staged |
 | Emergency Homepage | `orangepi5-ultra` | `ready` | `simple-deploy` | volumen local del nodo | none | opcional `nas:/srv/docs` | `sí` | `config-export` | `required` | none | dashboard resiliente mínimo |
+
+## Hostname Exposure Classes
+
+| Clase | Significado operativo | Ejemplos actuales |
+|---|---|---|
+| `local-family` | hostname usable en LAN para experiencia normal familiar/local; no implica publicacion inmediata | `home.white-enciso.com` |
+| `local-ops` | hostname de operacion local, observabilidad o alerting; privado por defecto | `ntfy.white-enciso.com` |
+| `admin-local-only` | hostname administrativo solo para LAN local o admin puntual; no publico | `pihole.white-enciso.com` |
+| `tailscale-only` | hostname o servicio planeado solo para red privada/Tailscale | `portainer.white-enciso.com` |
+| `staged-placeholder` | resuelve localmente pero sigue en placeholder o espera backend/politica de acceso | `auth.white-enciso.com`, `paperless.white-enciso.com`, `immich.white-enciso.com`, `navidrome.white-enciso.com` |
+| `future-public` | candidato futuro a exposure mas amplia, despues de backend validado y politica cerrada | `jellyfin.white-enciso.com` |
+| `never-public` | no debe publicarse a Internet en el diseño objetivo | `pihole.white-enciso.com`, `portainer.white-enciso.com` |
+
+## Cloudflared Exposure Classes
+
+| Clase | Significado operativo | Ejemplos actuales |
+|---|---|---|
+| `public-candidate` | puede evaluarse para exposure publica futura, pero no entra sin allowlist explicita | `home.white-enciso.com`, `jellyfin.white-enciso.com` |
+| `private-only` | se mantiene privado aunque tenga hostname estable | `ntfy.white-enciso.com` |
+| `tailscale-only` | solo acceso por red privada/Tailscale; no exposure publica | `portainer.white-enciso.com` |
+| `blocked-until-auth` | no pasa al plano publico antes de backend real y politica de auth cerrada | `auth.white-enciso.com`, `paperless.white-enciso.com`, `immich.white-enciso.com`, `navidrome.white-enciso.com` |
+| `never-public` | no debe publicarse nunca | `pihole.white-enciso.com`, `portainer.white-enciso.com` |
 
 ## Identidad y seguridad
 

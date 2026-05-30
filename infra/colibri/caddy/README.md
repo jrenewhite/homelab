@@ -84,3 +84,43 @@ Backends reales actuales:
   - `Caddy` en `management` lo proxyea a `http://127.0.0.1:8080`
 - `ntfy.white-enciso.com`
   - `Caddy` en `management` lo proxyea a `http://192.168.0.14:8300`
+
+## Politica de exposure por hostname
+
+Antes de conectar nuevos backends o preparar exposure publica futura:
+
+- `home.white-enciso.com`
+  - clase: `local-family`
+- `ntfy.white-enciso.com`
+  - clase: `local-ops`
+- `pihole.white-enciso.com`
+  - clase: `admin-local-only`
+- `portainer.white-enciso.com`
+  - clase: `tailscale-only`
+- `auth.white-enciso.com`
+  - clase: `staged-placeholder`
+- `paperless.white-enciso.com`
+  - clase: `staged-placeholder`
+- `immich.white-enciso.com`
+  - clase: `staged-placeholder`
+- `jellyfin.white-enciso.com`
+  - clase: `future-public`
+- `navidrome.white-enciso.com`
+  - clase: `staged-placeholder`
+
+Guardrails:
+
+- `pihole.white-enciso.com` no debe ser publico
+- `Portainer` no debe ser publico
+- `auth.white-enciso.com` no avanza a backend real ni exposure mayor antes del microplan de `SSO`
+- `local-only` y `tailscale-only` siguen siendo el default mas seguro hasta nueva decision explicita
+
+## Guardrails para cloudflared futuro
+
+- `cloudflared` sigue desactivado en esta fase
+- cualquier exposure futura sigue `default deny`
+- solo se permite `allowlist` explicita por hostname
+- cadena objetivo futura:
+  - Internet -> `cloudflared` -> `Caddy` local -> backend
+- `pihole.white-enciso.com` y cualquier URL de `Portainer` quedan fuera de exposure publica
+- `auth`, `paperless`, `immich` y `navidrome` no cruzan al plano publico antes de policy de auth cerrada

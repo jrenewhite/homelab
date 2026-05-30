@@ -87,3 +87,59 @@
 | `Portainer Agent` `orangepi5-a` | `orangepi5-a` | none | n/a | no aplica por ahora | `defer` |
 | `Portainer Agent` `orangepi5-b` | `orangepi5-b` | none | n/a | no aplica por ahora | `defer` |
 | `Dockge` | `management` preferido, o `services` | none | `8800-8899` | LAN/Tailscale privado; no publico | `future` |
+
+## Hostname Exposure Policy
+
+| Hostname | Clase | Backend actual o futuro | Exposure actual | Exposure futura maxima | Estado |
+|---|---|---|---|---|---|
+| `home.white-enciso.com` | `local-family` | `management:127.0.0.1:8080` | LAN local por `Caddy` | por decidir en fase publica | `active` |
+| `ntfy.white-enciso.com` | `local-ops` | `orangepi5-ultra:8300` via `Caddy` | LAN/Tailscale | privado; no publico por ahora | `active` |
+| `pihole.white-enciso.com` | `admin-local-only` | admin DNS futuro | no expuesto por hostname aun | `admin-local-only` o `tailscale-only` | `planned` |
+| `portainer.white-enciso.com` | `tailscale-only` | `Portainer Server` futuro en `management` | no expuesto por hostname aun | `tailscale-only` | `planned` |
+| `auth.white-enciso.com` | `staged-placeholder` | `services` futuro | placeholder local | por decidir despues de `SSO` | `staged` |
+| `paperless.white-enciso.com` | `staged-placeholder` | `services` futuro | placeholder local | por decidir despues de backend + auth | `staged` |
+| `immich.white-enciso.com` | `staged-placeholder` | `services` futuro | placeholder local | por decidir despues de backend + auth | `staged` |
+| `jellyfin.white-enciso.com` | `future-public` | `ai-gpu` futuro | placeholder local | candidato futuro a exposicion publica controlada | `staged` |
+| `navidrome.white-enciso.com` | `staged-placeholder` | `services` futuro | placeholder local | por decidir despues de backend + auth | `staged` |
+
+Reglas:
+
+- `pihole.white-enciso.com` nunca se considera publico
+- `Portainer` nunca se considera publico
+- `home.white-enciso.com` puede priorizar experiencia local familiar
+- `ntfy.white-enciso.com` queda orientado a operaciones
+- `auth` bloquea su exposure final hasta el microplan de identidad
+
+## Cloudflared Exposure Policy
+
+| Hostname | Clase cloudflared | Permitido hoy | Condicion para allowlist futura |
+|---|---|---|---|
+| `home.white-enciso.com` | `public-candidate` | no | decision explicita de exposure publica |
+| `ntfy.white-enciso.com` | `private-only` | no | solo si cambia politica de ops |
+| `pihole.white-enciso.com` | `never-public` | no | ninguna |
+| `portainer.white-enciso.com` | `tailscale-only` | no | ninguna exposure publica; solo privado |
+| `auth.white-enciso.com` | `blocked-until-auth` | no | backend real + microplan `SSO` |
+| `paperless.white-enciso.com` | `blocked-until-auth` | no | backend real + auth + backup policy |
+| `immich.white-enciso.com` | `blocked-until-auth` | no | backend real + auth + backup policy |
+| `jellyfin.white-enciso.com` | `public-candidate` | no | backend real + politica de media/energia |
+| `navidrome.white-enciso.com` | `blocked-until-auth` | no | backend real + auth/media policy |
+
+Guardrails:
+
+- `default deny`
+- solo `allowlist` explicita
+- admin tools: `never-public`
+- `cloudflared` sigue fuera de runtime en esta fase
+
+## Cloudflared Runtime Policy
+
+| Nodo | Rol futuro | Estado actual | Runtime futuro | Secretos |
+|---|---|---|---|---|
+| `management` | principal | `active via Docker Compose` | `/opt/stacks/cloudflared` | `/opt/colibri-secrets/cloudflared/` |
+| `orangepi5-ultra` | backup | `not installed` | `/etc/cloudflared/config.yml` | `/opt/colibri-secrets/cloudflared/` |
+
+Notas factuales:
+
+- `management` corre el canary `cloudflared` como stack `colibri-cloudflared`
+- `home.white-enciso.com` es la unica allowlist publica activa en esta fase
+- `orangepi5-ultra` sigue sin despliegue `cloudflared`

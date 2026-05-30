@@ -493,3 +493,245 @@ Veredicto:
 
 - `06E`: `pass`
 - siguiente backend real local: `go`
+
+## `06F` — Local hostname exposure policy
+
+Resultado factual de `06F`:
+
+- no se conectan backends nuevos
+- no se cambian registros DNS ni comportamiento de `Caddy`
+- queda definida la politica local de exposicion por hostname antes de abrir mas servicios o preparar exposicion publica futura
+
+Clasificacion cerrada:
+
+| Hostname | Clasificacion | Estado actual | Politica actual |
+|---|---|---|---|
+| `home.white-enciso.com` | `local-family` | backend real local | accesible en LAN local; candidato natural a experiencia familiar local |
+| `ntfy.white-enciso.com` | `local-ops` | backend real local | solo operaciones y alerting local; no publico por ahora |
+| `pihole.white-enciso.com` | `admin-local-only` | DNS staged opcional / admin future | no publico; solo admin local o eventual `Tailscale` |
+| `portainer.white-enciso.com` | `tailscale-only` | futuro | no publico; solo privado por `LAN/Tailscale` |
+| `auth.white-enciso.com` | `staged-placeholder` | placeholder local | bloqueado hasta microplan de `SSO/auth` |
+| `paperless.white-enciso.com` | `staged-placeholder` | placeholder local | bloqueado hasta microplan propio y decision de auth/exposure |
+| `immich.white-enciso.com` | `staged-placeholder` | placeholder local | bloqueado hasta microplan propio y decision de auth/exposure |
+| `jellyfin.white-enciso.com` | `future-public` | placeholder local | candidato futuro a exposicion mas amplia, pero no en esta fase |
+| `navidrome.white-enciso.com` | `staged-placeholder` | placeholder local | bloqueado hasta microplan propio y decision de auth/exposure |
+
+Reglas cerradas:
+
+- `home.white-enciso.com` puede operar como `local-family`
+- `ntfy.white-enciso.com` queda `local-ops`
+- `pihole.white-enciso.com` queda `admin-local-only`
+- `portainer.white-enciso.com` queda `tailscale-only`
+- `auth.white-enciso.com` no se expone ni se conecta como backend real antes del microplan de `SSO`
+- `paperless`, `immich`, `jellyfin` y `navidrome` no avanzan a exposicion mas amplia sin backend validado y politica de acceso decidida
+- `never-public` se aplica desde ahora a:
+  - `pihole.white-enciso.com`
+  - cualquier futura URL de `Portainer`
+- `local-only` y `tailscale-only` siguen siendo el default mas seguro
+
+Lectura operativa:
+
+- `06F` no cambia infraestructura
+- `06F` solo fija el marco para decidir que hostnames pueden avanzar pronto y cuales deben quedarse frenados
+- la siguiente fase puede concentrarse en conectar un backend real adicional sin reabrir la discusion de exposure policy
+
+Veredicto:
+
+- `06F`: `pass`
+- `06G`: `go`
+
+## `06G` — Cloudflared exposure policy
+
+Resultado factual de `06G`:
+
+- no se activa `cloudflared`
+- no se activa `TLS` publico
+- no se expone ningun servicio a Internet
+- queda definida la politica de exposure futura para la capa:
+  - Internet -> `cloudflared` -> `Caddy` local -> backend
+
+Clasificacion futura para `cloudflared`:
+
+| Hostname | Clase cloudflared | Estado actual | Guardrail principal |
+|---|---|---|---|
+| `home.white-enciso.com` | `public-candidate` | backend real local | solo si se decide exposure publica en fase posterior |
+| `ntfy.white-enciso.com` | `private-only` | backend real local | no publico por ahora; ops local primero |
+| `pihole.white-enciso.com` | `never-public` | admin future | nunca publicar |
+| `portainer.white-enciso.com` | `tailscale-only` | futuro | privado por `Tailscale`; no publico |
+| `auth.white-enciso.com` | `blocked-until-auth` | placeholder local | no publicar antes de `authentik`/`SSO` |
+| `paperless.white-enciso.com` | `blocked-until-auth` | placeholder local | requiere auth y politica de backup/restore |
+| `immich.white-enciso.com` | `blocked-until-auth` | placeholder local | requiere auth y politica de backup/restore |
+| `jellyfin.white-enciso.com` | `public-candidate` | placeholder local | bloqueado hasta politica de media/energia |
+| `navidrome.white-enciso.com` | `blocked-until-auth` | placeholder local | bloqueado hasta politica de media/auth |
+
+Reglas cerradas:
+
+- `default deny`
+- solo entra a `cloudflared` una `allowlist` explicita por hostname
+- herramientas administrativas quedan fuera de exposure publica
+- servicios personales requieren `auth/SSO` antes de cualquier exposure mayor
+- servicios de media requieren politica separada de media/energia antes de exposure mayor
+- `cloudflared` no se activa en esta fase
+
+Never-public:
+
+- `pihole.white-enciso.com`
+- cualquier futura URL de `Portainer`
+
+Blocked-until-auth:
+
+- `auth.white-enciso.com`
+- `paperless.white-enciso.com`
+- `immich.white-enciso.com`
+- `navidrome.white-enciso.com`
+
+Future-public candidates:
+
+- `home.white-enciso.com`
+- `jellyfin.white-enciso.com`
+
+Lectura operativa:
+
+- `06G` no cambia `Caddy`, `Pi-hole`, `router` ni backends
+- `06G` solo fija el marco para decidir que hostnames podrian cruzar al plano `cloudflared`
+- cualquier exposure futura debe mantener la cadena:
+  - Internet -> `cloudflared` -> `Caddy` -> backend local validado
+
+Veredicto:
+
+- `06G`: `pass`
+- `06H`: `go`
+
+## `06H` — Cloudflared preflight y plantilla
+
+Resultado factual de `06H`:
+
+- `cloudflared` no esta instalado en `management`
+- `cloudflared` no esta instalado en `orangepi5-ultra`
+- no se encuentra runtime previo aprobado en `/etc/cloudflared`
+- no se activa tunel, no se crea `DNS` publico y no se inicia servicio
+
+Estructura versionada creada:
+
+- `infra/colibri/cloudflared/README.md`
+- `infra/colibri/cloudflared/config.example.yml`
+
+Runtime futuro documentado:
+
+- config:
+  - `/etc/cloudflared/config.yml`
+- secretos:
+  - `/opt/colibri-secrets/cloudflared/`
+
+Credenciales fuera de `git`:
+
+- `cert.pem`
+- credenciales JSON del tunel
+- tokens
+
+Allowlist documental inicial:
+
+- `public-candidate`:
+  - `home.white-enciso.com`
+  - `jellyfin.white-enciso.com`
+- privados o bloqueados:
+  - `ntfy.white-enciso.com`
+  - `pihole.white-enciso.com`
+  - `portainer.white-enciso.com`
+  - `auth.white-enciso.com`
+  - `paperless.white-enciso.com`
+  - `immich.white-enciso.com`
+  - `navidrome.white-enciso.com`
+
+Lectura operativa:
+
+- `06H` deja listo el esqueleto versionado y la separacion limpia entre config y secretos
+- la fase no instala ni activa nada
+- la cadena futura se mantiene:
+  - Internet -> `cloudflared` -> `Caddy` local -> backend
+
+Veredicto:
+
+- `06H`: `pass`
+- `06I`: `go`
+
+## `06I` — Cloudflared canary tunnel para `home.white-enciso.com`
+
+Resultado factual de `06I`:
+
+- `cloudflared` canary queda desplegado en `management` por `Docker Compose`
+- stack versionado:
+  - `infra/colibri/cloudflared/docker-compose.yml`
+- runtime:
+  - `/opt/stacks/cloudflared`
+- nombre de proyecto:
+  - `colibri-cloudflared`
+- contenedor:
+  - `cloudflared`
+
+Version:
+
+- `cloudflared` `2026.5.2`
+
+Secretos:
+
+- ruta:
+  - `/opt/colibri-secrets/cloudflared/`
+- archivos runtime:
+  - `cloudflared.env`
+  - `tunnel.token`
+  - `cert.pem`
+  - `15852846-afc2-41d5-92d9-87b437109528.json`
+- nada de esto queda en `git`
+
+Tunnel canary:
+
+- nombre:
+  - `colibri-home-canary`
+- tunnel id:
+  - `15852846-afc2-41d5-92d9-87b437109528`
+
+Ingress efectivo:
+
+- allowlist canary:
+  - `home.white-enciso.com` -> `http://host.docker.internal:80`
+- catch-all:
+  - `http_status:404`
+
+Validacion:
+
+- `docker compose config`: `ok`
+- `cloudflared tunnel ingress validate`: `OK`
+- `cloudflared tunnel info colibri-home-canary`: con conexiones activas
+- validacion publica canary usando edge publico:
+  - `curl https://home.white-enciso.com` via IP publica de `Cloudflare`: `HTTP 200`
+  - contenido servido: `Homepage`
+
+Hostnames no expuestos por este canary:
+
+- `ntfy.white-enciso.com`
+- `pihole.white-enciso.com`
+- `portainer.white-enciso.com`
+- `auth.white-enciso.com`
+- `paperless.white-enciso.com`
+- `immich.white-enciso.com`
+- `navidrome.white-enciso.com`
+- `jellyfin.white-enciso.com`
+
+Caveat importante:
+
+- se observo que `portainer.white-enciso.com` resuelve publicamente a IPs de `Cloudflare`
+- pero no sirve app ni cruza por la allowlist del canary; responde error `530`
+- esto sugiere `DNS` publico previo o wildcard heredado fuera del alcance de esta fase
+- no se corrigio aqui porque `06I` solo debia publicar el canary de `home`
+
+Lectura operativa:
+
+- `home.white-enciso.com` ya tiene canary publico funcional
+- el modelo `default deny` y catch-all queda aplicado dentro de este tunel
+- antes de `06J` conviene revisar la deuda de `DNS` publico heredado para hostnames que no deben quedar publicables
+
+Veredicto:
+
+- `06I`: `pass with public-dns caveat`
+- `06J`: `go`
