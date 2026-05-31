@@ -8,15 +8,15 @@ Este documento esta en fase de preparacion previa a llegada. A diferencia de `Co
 
 | Hostname objetivo | IP reservada objetivo | Hardware | SO objetivo | Rol | Estado |
 |---|---|---|---|---|---|
-| `peru-management` | `192.168.10.10` | pending | `Ubuntu Server LTS` | control plane, `Tailscale`, `Ansible`, DNS/proxy futuro | pending |
-| `peru-nas` | `192.168.10.11` | gabinete NAS armado | pending | archivo frio, `NFS`, backups | deferred |
-| `peru-services` | `192.168.10.12` | `Minisforum UM870 Slim` | `Ubuntu Server LTS` | apps principales, hot storage | pending |
-| `peru-ai-gpu` | `192.168.10.13` | `Minisforum 790S7` + `RTX 5060` | `Ubuntu Server LTS` | media/IA pesada | pending |
-| `peru-rpi5-ultra` | `192.168.10.14` | `Raspberry Pi 5 8 GB` + `SSD USB 240 GB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | DNS secundario, `Home Assistant`, sentinel | pending |
-| `peru-rpi5-max` | `192.168.10.15` | `Raspberry Pi 5 8 GB` + `SSD USB 240 GB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | DNS terciario opcional, worker ARM | pending |
-| `peru-rpi5-a` | `192.168.10.16` | `Raspberry Pi 5 8 GB` + `SSD USB 240 GB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | worker ARM, utilitarios | pending |
-| `peru-rpi4-a` | `192.168.10.17` | `Raspberry Pi 4B 8 GB` + `SSD USB 1 TB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | watchdog, healthchecks, utilitarios | pending |
-| `peru-rpi4-b` | `192.168.10.18` | `Raspberry Pi 4B 8 GB` + `SSD USB 1 TB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | watchdog, healthchecks, utilitarios | pending |
+| `peru-management` | `192.168.0.10` | pending | `Ubuntu Server LTS` | control plane, `Tailscale`, `Ansible`, DNS/proxy futuro | online: SSH, Tailscale, WOL |
+| `peru-nas` | `192.168.0.11` | gabinete NAS armado | pending | archivo frio, `NFS`, backups | deferred |
+| `peru-services` | `192.168.0.12` | `Minisforum UM870 Slim` | `Ubuntu Server LTS` | apps principales, hot storage | online: SSH, Tailscale, WOL |
+| `peru-ai-gpu` | `192.168.0.13` | `Minisforum 790S7` + `RTX 5060` | `Ubuntu Server LTS` | media/IA pesada | online: SSH, Tailscale, WOL |
+| `peru-rpi5-ultra` | `192.168.0.14` | `Raspberry Pi 5 8 GB` + `SSD USB 240 GB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | DNS secundario, `Home Assistant`, sentinel | online: SSH, Tailscale, WOL |
+| `peru-rpi5-max` | `192.168.0.15` | `Raspberry Pi 5 8 GB` + `SSD USB 240 GB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | DNS terciario opcional, worker ARM | online: SSH, Tailscale, WOL |
+| `peru-rpi5-a` | `192.168.0.16` | `Raspberry Pi 5 8 GB` + `SSD USB 240 GB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | worker ARM, utilitarios | pending |
+| `peru-rpi4-a` | `192.168.0.17` | `Raspberry Pi 4B 8 GB` + `SSD USB 1 TB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | watchdog, healthchecks, utilitarios | online: SSH, Tailscale, WOL |
+| `peru-rpi4-b` | `192.168.0.18` | `Raspberry Pi 4B 8 GB` + `SSD USB 1 TB` | `Ubuntu Server` o `Raspberry Pi OS Lite` | watchdog, healthchecks, utilitarios | online: SSH, Tailscale, WOL |
 
 ## 2. Equivalencias con Colibrí
 

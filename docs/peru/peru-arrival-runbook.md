@@ -38,15 +38,15 @@ Llevar listos:
 
 | Nodo | IP objetivo | Prioridad |
 |---|---|---|
-| `peru-management` | `192.168.10.10` | `P0` |
-| `peru-nas` | `192.168.10.11` | `P2` |
-| `peru-services` | `192.168.10.12` | `P0` |
-| `peru-ai-gpu` | `192.168.10.13` | `P0` |
-| `peru-rpi5-ultra` | `192.168.10.14` | `P0` |
-| `peru-rpi5-max` | `192.168.10.15` | `P1` |
-| `peru-rpi5-a` | `192.168.10.16` | `P1` |
-| `peru-rpi4-a` | `192.168.10.17` | `P1` |
-| `peru-rpi4-b` | `192.168.10.18` | `P1` |
+| `peru-management` | `192.168.0.10` | `P0` |
+| `peru-nas` | `192.168.0.11` | `P2` |
+| `peru-services` | `192.168.0.12` | `P0` |
+| `peru-ai-gpu` | `192.168.0.13` | `P0` |
+| `peru-rpi5-ultra` | `192.168.0.14` | `P0` |
+| `peru-rpi5-max` | `192.168.0.15` | `P1` |
+| `peru-rpi5-a` | `192.168.0.16` | `P1` |
+| `peru-rpi4-a` | `192.168.0.17` | `P1` |
+| `peru-rpi4-b` | `192.168.0.18` | `P1` |
 
 ## 4. Secuencia recomendada de 2 horas
 
@@ -54,8 +54,10 @@ Llevar listos:
 
 - entrar al `ER605`
 - confirmar subred real
-- si es viable, dejar `192.168.10.0/24`
+- conservar LAN del router en `192.168.0.1/24`
+- reservar infraestructura en `192.168.0.10-29`
 - crear reservas DHCP para todos los nodos previstos
+- importar `Address_Reservation_Proposed.csv` con la LAN en `192.168.0.0/24`
 - conectar primero solo los nodos `P0`
 
 ### 20-50 min

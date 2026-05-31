@@ -1,5 +1,5 @@
 pihole_enabled: true
 pihole_role: tertiary
-pihole_listen_ip: 192.168.10.15
+pihole_listen_ip: 192.168.0.15
 pihole_web_port: 8202
 pihole_stack_dir: /srv/storage/appdata/pihole-tertiary

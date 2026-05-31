@@ -38,31 +38,30 @@ Busca dejar:
 - despues DNS local, proxy y apps.
 - no se intentan demasiadas capas criticas en la misma ventana.
 
-## 3. Decision de red propuesta
+## 3. Decision de red
 
-`Perú` no debe reutilizar `192.168.0.0/24` si despues existira `WireGuard site-to-site`.
+El `ER605` de `Perú` usa `192.168.0.0/24` y se mantiene ese rango para la primera ventana.
 
-Subred propuesta para `Perú`:
+Subred efectiva para `Perú`:
 
 ```text
-LAN: 192.168.10.0/24
-router: 192.168.10.1
-reservas de infraestructura: 192.168.10.10-29
-DHCP dinamico general: 192.168.10.100-199
+LAN: 192.168.0.0/24
+router: 192.168.0.1
+reservas de infraestructura: 192.168.0.10-29
+DHCP dinamico general: se conserva segun configuracion actual del ER605
 ```
 
 Razon:
 
-- evita overlap futuro con `Colibrí` `192.168.0.0/24`;
-- simplifica rutas inter-sede;
-- permite clonar la semantica de IPs por rol:
-  - `.10` management
-  - `.11` nas
-  - `.12` services
-  - `.13` ai-gpu
-  - `.14+` ARM/SBC
+- evita cambiar la LAN durante la ventana inicial;
+- conserva la semantica de IPs ya documentada, pero dentro del rango real del `ER605`;
+- permite cerrar reservas DHCP y `Tailscale` primero, dejando cualquier renumeracion futura como trabajo separado.
 
-Si el `ER605` en `Perú` ya usa otra subred y cambiarla en sitio es riesgoso, se conserva la subred existente y se documenta como excepcion.
+Decision operativa:
+
+- no migrar el `ER605` fuera de `192.168.0.0/24` durante la primera ventana;
+- importar reservas definitivas en el rango `192.168.0.10-29`;
+- si mas adelante se necesita evitar overlap inter-sede, planear esa renumeracion como cambio controlado posterior.
 
 ## 4. Roles definitivos por nodo
 

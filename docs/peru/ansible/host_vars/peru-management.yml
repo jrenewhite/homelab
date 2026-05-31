@@ -1,5 +1,5 @@
 pihole_enabled: true
 pihole_role: primary
-pihole_listen_ip: 192.168.10.10
+pihole_listen_ip: 192.168.0.10
 pihole_web_port: 8200
 pihole_stack_dir: /opt/stacks/pihole-primary
