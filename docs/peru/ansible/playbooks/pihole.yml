@@ -5,9 +5,8 @@
   gather_facts: true
   vars:
     pihole_target_hosts:
-      - peru-management
-      - peru-rpi5-ultra
-      - peru-rpi5-max
+      - peru-rpi5-a
+      - peru-rpi4-a
 
   tasks:
     - name: Guard live Pi-hole deployment

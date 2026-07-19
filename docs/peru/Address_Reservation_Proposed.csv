@@ -1,8 +1,8 @@
 Network Name,MAC,IP,Status,Export to IP-MAC Binding,Description
-LAN,84-A9-3E-12-A6-9B,192.168.0.10,TRUE,TRUE,peru-management / control plane
+LAN,0C-EF-15-96-0A-07,192.168.0.11,TRUE,TRUE,peru-nas / OMV NAS
 LAN,38-05-25-31-87-90,192.168.0.12,TRUE,TRUE,peru-services / Minisforum UM870 Slim
 LAN,58-47-CA-7F-86-00,192.168.0.13,TRUE,TRUE,peru-ai-gpu / Minisforum 790S7 RTX 5060
-LAN,88-A2-9E-0D-31-DC,192.168.0.14,TRUE,TRUE,peru-rpi5-ultra / current raspberrypi5b-a
-LAN,88-A2-9E-0D-33-54,192.168.0.15,TRUE,TRUE,peru-rpi5-max / current raspberrypi5b-b
+LAN,88-A2-9E-0D-31-DC,192.168.0.14,TRUE,TRUE,peru-rpi5-a / antes raspberrypi5b-a
+LAN,88-A2-9E-0D-33-54,192.168.0.15,TRUE,TRUE,peru-rpi5-b / antes raspberrypi5b-b
 LAN,D8-3A-DD-24-CB-D1,192.168.0.17,TRUE,TRUE,peru-rpi4-a / current raspberrypi4b-a
 LAN,D8-3A-DD-24-B3-BB,192.168.0.18,TRUE,TRUE,peru-rpi4-b / current raspberrypi4b-b
