@@ -38,59 +38,59 @@ Busca dejar:
 - despues DNS local, proxy y apps.
 - no se intentan demasiadas capas criticas en la misma ventana.
 
-## 3. Decision de red propuesta
+## 3. Decision de red
 
-`Perú` no debe reutilizar `192.168.0.0/24` si despues existira `WireGuard site-to-site`.
+El `ER605` de `Perú` usa `192.168.0.0/24` y se mantiene ese rango para la primera ventana.
 
-Subred propuesta para `Perú`:
+Subred efectiva para `Perú`:
 
 ```text
-LAN: 192.168.10.0/24
-router: 192.168.10.1
-reservas de infraestructura: 192.168.10.10-29
-DHCP dinamico general: 192.168.10.100-199
+LAN: 192.168.0.0/24
+router: 192.168.0.1
+reservas de infraestructura: 192.168.0.10-29
+DHCP dinamico general: se conserva segun configuracion actual del ER605
 ```
 
 Razon:
 
-- evita overlap futuro con `Colibrí` `192.168.0.0/24`;
-- simplifica rutas inter-sede;
-- permite clonar la semantica de IPs por rol:
-  - `.10` management
-  - `.11` nas
-  - `.12` services
-  - `.13` ai-gpu
-  - `.14+` ARM/SBC
+- evita cambiar la LAN durante la ventana inicial;
+- conserva la semantica de IPs ya documentada, pero dentro del rango real del `ER605`;
+- permite cerrar reservas DHCP y `Tailscale` primero, dejando cualquier renumeracion futura como trabajo separado.
 
-Si el `ER605` en `Perú` ya usa otra subred y cambiarla en sitio es riesgoso, se conserva la subred existente y se documenta como excepcion.
+Decision operativa:
+
+- no migrar el `ER605` fuera de `192.168.0.0/24` durante la primera ventana;
+- importar reservas definitivas en el rango `192.168.0.10-29`;
+- si mas adelante se necesita evitar overlap inter-sede, planear esa renumeracion como cambio controlado posterior.
 
 ## 4. Roles definitivos por nodo
 
 | Nodo canonico | Rol | Regimen |
 |---|---|---|
-| `peru-management` | control plane, `Tailscale`, `Ansible`, DNS primario futuro, proxy principal futuro | 24/7 |
-| `peru-services` | apps principales, storage caliente, coordinacion de sync | 24/7 |
+| `peru-services` | control plane operativo, `Tailscale`, `Ansible`, `NUT` master, apps principales, storage caliente, coordinacion de sync, `Caddy` primario futuro | 24/7 |
 | `peru-ai-gpu` | GPU pesada, media pesada, IA, jobs batch | bajo demanda |
 | `peru-nas` | archivo frio, `NFS`, backups, libreria final | despertable o diferido |
-| `peru-rpi5-ultra` | DNS secundario, `Home Assistant`, sentinel secundario, backup proxy/tunnel | 24/7 |
-| `peru-rpi5-max` | sentinel auxiliar, DNS terciario opcional, worker ARM | 24/7 |
-| `peru-rpi5-a` | worker ARM stateless o utilitario persistente | 24/7 |
-| `peru-rpi4-a` | watchdog, healthchecks, utilidades ligeras | 24/7 |
+| `peru-rpi5-a` | `Pi-hole` primario, `Home Assistant`, sentinel secundario, backup proxy/tunnel | 24/7 |
+| `peru-rpi5-b` | recuperacion fisica requerida tras intento remoto de migrar rootfs a SSD | 24/7 cuando este sano |
+| `peru-rpi4-a` | `Pi-hole` secundario provisional, watchdog, healthchecks, utilidades ligeras | 24/7 |
 | `peru-rpi4-b` | watchdog, healthchecks, utilidades ligeras o storage auxiliar | 24/7 |
+
+`peru-management` queda retirado del sitio y su reserva `192.168.0.10` no debe importarse como nodo activo.
 
 ## 5. Hardware confirmado
 
 - `peru-services`: `Minisforum UM870 Slim`, misma RAM y SSDs que el equivalente en `Colibrí`
 - `peru-ai-gpu`: `Minisforum 790S7`, misma RAM, SSDs y `RTX 5060`
 - `peru-nas`: gabinete armado; puede quedar fuera de la primera ventana
-- `3 x Raspberry Pi 5 8 GB` con `SSD USB 240 GB`
+- `2 x Raspberry Pi 5 8 GB` con `SSD USB 240 GB`
 - `2 x Raspberry Pi 4B 8 GB` con `SSD USB 1 TB`
+- `peru-services` tiene ambos `UPS` conectados por `USB` y sera el `NUT` master del sitio.
 
 ## 6. Supuestos y pendientes aun no cerrados
 
-- se asume que `management` existe como nodo separado, pero su hardware aun no esta documentado aqui;
-- se asume que los `5 SBCs` mencionados son el dato correcto;
-- no esta cerrada aun la politica electrica local de `Perú`;
+- `peru-management` fue retirado del sitio; no se considera parte del estado objetivo activo;
+- se confirmaron `4 SBCs`: `2 x Raspberry Pi 5` y `2 x Raspberry Pi 4`, todas de `8 GB`;
+- la politica electrica local parte de `peru-services` como `NUT` master por conexion USB directa a ambos `UPS`;
 - `nas` puede quedar fuera del primer dia;
 - no esta aprobada aun ninguna exposicion publica por `cloudflared` desde `Perú`;
 - `authentik`, `Vaultwarden`, `Matrix` y demas estado delicado no se promueven en la primera ventana.
@@ -99,23 +99,37 @@ Si el `ER605` en `Perú` ya usa otra subred y cambiarla en sitio es riesgoso, se
 
 Orden real de prioridad para el primer dia:
 
-1. `peru-management`
-2. `peru-services`
-3. `peru-ai-gpu`
-4. `peru-rpi5-ultra`
-5. `peru-rpi5-max`
-6. `peru-rpi5-a`
-7. `peru-rpi4-a`
-8. `peru-rpi4-b`
-9. `peru-nas`
+1. `peru-services`
+2. `peru-rpi5-a`
+3. `peru-rpi4-a`
+4. `peru-ai-gpu`
+5. `peru-rpi4-b`
+6. `peru-nas`
+7. `peru-rpi5-b`
 
 Interpretacion:
 
-- todo nodo por encima de `peru-rpi5-ultra` debe salir con `Tailscale` el mismo dia si arranca;
+- `peru-services`, `peru-rpi5-a` y `peru-rpi4-a` forman la base minima de control local;
 - el resto puede quedar por lotes, pero con hostname e IP reservada definidos;
 - `nas` solo entra si sobra tiempo o ya esta fisicamente listo.
 
-## 8. Tailscale-first
+## 8. DNS, Proxy y Control Plane
+
+Decision:
+
+- `Pi-hole` primario en `peru-rpi5-a`;
+- `Pi-hole` secundario en `peru-rpi4-a` mientras `peru-rpi5-b` requiere recuperacion fisica;
+- `peru-rpi5-b` no debe alojar DNS ni servicios criticos hasta recuperar el boot tras la migracion remota incompleta a SSD;
+- `Caddy` primario en `peru-services`, porque las apps principales y el storage caliente viviran ahi;
+- `peru-rpi5-a` puede alojar un `Caddy` standby o proxy minimo solo si se necesita continuidad durante mantenimiento de `peru-services`.
+
+Razon:
+
+- DNS debe sobrevivir reinicios de apps, `Docker` pesado o mantenimiento del nodo `services`;
+- Caddy se beneficia de estar cerca de los backends principales;
+- el control plane queda repartido: energia y apps en `peru-services`, DNS/sentinel en las `RPi`.
+
+## 9. Tailscale-first
 
 La prioridad inmediata no es desplegar servicios.
 
@@ -133,12 +147,12 @@ Politica inicial:
 - sin exposicion publica
 - sin subnet routers ni exit nodes el primer dia, salvo necesidad clara
 
-## 9. Criterios de exito de la primera ventana
+## 10. Criterios de exito de la primera ventana
 
 La primera visita a `Perú` se considera exitosa si al terminar:
 
 - el router tiene reservas DHCP para todos los nodos previstos;
-- `peru-management`, `peru-services`, `peru-ai-gpu` y `peru-rpi5-ultra` responden por `ping` y `SSH`;
+- `peru-services`, `peru-ai-gpu`, `peru-rpi5-a` y `peru-rpi4-a` responden por `ping` y `SSH`;
 - esos mismos nodos aparecen en `Tailscale`;
 - existe evidencia escrita de que subred, hostnames y roles quedaron cerrados;
 - no se hicieron cambios de riesgo alto innecesarios en DNS, proxy publico o storage.

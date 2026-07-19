@@ -1,0 +1,4 @@
+pihole_enabled: false
+repair_required: true
+repair_reason: remote SD-boot plus SSD-rootfs migration attempted on 2026-07-18; node did not return over Tailscale after reboot
+ssd_rootfs_uuid: b9618d45-c048-4f2e-bce9-b82bb7e3e094

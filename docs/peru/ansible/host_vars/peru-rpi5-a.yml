@@ -1,0 +1,5 @@
+pihole_enabled: true
+pihole_role: primary
+pihole_listen_ip: 192.168.0.14
+pihole_web_port: 8200
+pihole_stack_dir: /srv/storage/appdata/pihole-primary

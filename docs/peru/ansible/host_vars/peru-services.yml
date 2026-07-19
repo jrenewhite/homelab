@@ -1,1 +1,4 @@
-# Reserved for future Peru-specific service overrides.
+control_plane_enabled: true
+caddy_primary: true
+nut_role: master
+nut_usb_ups_count: 2

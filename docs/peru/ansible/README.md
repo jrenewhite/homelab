@@ -13,12 +13,10 @@ Esta carpeta clona solo lo necesario de `docs/colibri/ansible` para:
 
 Queda intencionalmente fuera en esta fase:
 
-- `NAS`
 - `NFS`
 - `mergerfs`
 - identidades compartidas de storage
 - automatizacion del router
-- `NUT`
 - playbooks destructivos o de storage frio
 
 ## Uso esperado
@@ -36,11 +34,14 @@ ansible-playbook -i inventory/hosts.yml playbooks/pihole.yml -e pihole_apply=tru
 
 ## Notas
 
-- el inventario usa las IPs objetivo propuestas para `Perú`
-- si la subred final cambia, primero se corrige `inventory/hosts.yml` y `host_vars/`
+- el inventario usa `ansible_host` por Tailscale (`100.x`) para operar remoto
+- `desired_ip` conserva la reserva LAN objetivo en `192.168.0.0/24`
+- si la subred final cambia, primero se corrige `desired_ip` en `inventory/hosts.yml` y los `host_vars/`
 - `pihole.yml` solo contempla:
-  - `peru-management`
-  - `peru-rpi5-ultra`
-  - `peru-rpi5-max`
+  - `peru-rpi5-a`
+  - `peru-rpi4-a`
+- `peru-services` absorbe el control plane operativo y queda como `NUT` master por conexion USB a ambos `UPS`
+- `Caddy` primario futuro vive en `peru-services`; `peru-rpi5-a` puede quedar como standby si se necesita
+- `peru-rpi5-b` queda fuera de roles criticos hasta recuperacion fisica; intento remoto de rootfs en SSD no volvio por Tailscale
 - `tailscale.yml` instala el agente y opcionalmente hace `up` solo si se proporciona una `auth key`
 - los secretos no se versionan aqui

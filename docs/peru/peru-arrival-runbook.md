@@ -38,15 +38,13 @@ Llevar listos:
 
 | Nodo | IP objetivo | Prioridad |
 |---|---|---|
-| `peru-management` | `192.168.10.10` | `P0` |
-| `peru-nas` | `192.168.10.11` | `P2` |
-| `peru-services` | `192.168.10.12` | `P0` |
-| `peru-ai-gpu` | `192.168.10.13` | `P0` |
-| `peru-rpi5-ultra` | `192.168.10.14` | `P0` |
-| `peru-rpi5-max` | `192.168.10.15` | `P1` |
-| `peru-rpi5-a` | `192.168.10.16` | `P1` |
-| `peru-rpi4-a` | `192.168.10.17` | `P1` |
-| `peru-rpi4-b` | `192.168.10.18` | `P1` |
+| `peru-nas` | `192.168.0.11` | `P2` |
+| `peru-services` | `192.168.0.12` | `P0` |
+| `peru-ai-gpu` | `192.168.0.13` | `P0` |
+| `peru-rpi5-a` | `192.168.0.14` | `P0` |
+| `peru-rpi5-b` | `192.168.0.15` | `P2` |
+| `peru-rpi4-a` | `192.168.0.17` | `P0` |
+| `peru-rpi4-b` | `192.168.0.18` | `P1` |
 
 ## 4. Secuencia recomendada de 2 horas
 
@@ -54,17 +52,19 @@ Llevar listos:
 
 - entrar al `ER605`
 - confirmar subred real
-- si es viable, dejar `192.168.10.0/24`
+- conservar LAN del router en `192.168.0.1/24`
+- reservar infraestructura en `192.168.0.10-29`
 - crear reservas DHCP para todos los nodos previstos
+- importar `Address_Reservation_Proposed.csv` con la LAN en `192.168.0.0/24`
 - conectar primero solo los nodos `P0`
 
 ### 20-50 min
 
 - validar lease e IP tomada por:
-  - `peru-management`
   - `peru-services`
   - `peru-ai-gpu`
-  - `peru-rpi5-ultra`
+  - `peru-rpi5-a`
+  - `peru-rpi4-a`
 - validar `ping`
 - validar `SSH`
 - fijar hostname final si todavia no coincide
@@ -88,30 +88,28 @@ Llevar listos:
   - `jq`
   - `rsync`
 - instalar `Docker` donde aplique:
-  - `peru-management`
   - `peru-services`
-  - `peru-rpi5-ultra` si alcanza
-- si todo va bien, dejar listo `Pi-hole` primario staged en `peru-management`
+  - `peru-rpi5-a` si alcanza
+- si todo va bien, dejar listo `Pi-hole` primario staged en `peru-rpi5-a`
+- dejar `peru-services` como candidato a `NUT` master por tener ambos `UPS` conectados por USB
 
 ## 5. Orden exacto de prioridad Tailscale
 
 ### P0
 
-- `peru-management`
 - `peru-services`
 - `peru-ai-gpu`
-- `peru-rpi5-ultra`
+- `peru-rpi5-a`
+- `peru-rpi4-a`
 
 ### P1
 
-- `peru-rpi5-max`
-- `peru-rpi5-a`
-- `peru-rpi4-a`
 - `peru-rpi4-b`
 
 ### P2
 
 - `peru-nas`
+- `peru-rpi5-b` hasta recuperar boot/storage en sitio
 
 ## 6. Criterio de exito por nodo
 
@@ -140,11 +138,14 @@ Un nodo cuenta como "listo para continuar remoto" si cumple:
 
 Si sobra tiempo, el primer servicio a dejar staged debe ser:
 
-1. `Pi-hole` primario en `peru-management`
-2. `Pi-hole` secundario en `peru-rpi5-ultra`
-3. `Homepage` local privado
+1. `Pi-hole` primario en `peru-rpi5-a`
+2. `Pi-hole` secundario en `peru-rpi4-a`
+3. `NUT` master en `peru-services`
+4. `Homepage` local privado en `peru-services`
 
-No intentaria `Caddy` ni exposicion publica el mismo dia si el acceso remoto todavia no quedo impecable.
+No intentaria exposicion publica el mismo dia si el acceso remoto todavia no quedo impecable. `Caddy` local puede quedar en `peru-services` cuando los backends principales esten definidos.
+
+`peru-rpi5-b` no debe recibir servicios criticos hasta recuperar boot/storage en sitio: se intento migrar rootfs a SSD de forma remota y el nodo no volvio por Tailscale tras reboot.
 
 ## 9. Checklist de salida
 
